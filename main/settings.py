@@ -104,7 +104,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Manila'
 
 USE_I18N = True
 
@@ -120,3 +120,11 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+MEDIA_ROOT = BASE_DIR.joinpath("media")
+MEDIA_URL = "/media/"
+
+
+# Unauthorized Accesses Redirect Path
+# LOGIN_REDIRECT_URL  = 'operate-index'
+# LOGIN_URL           = 'user-login'
