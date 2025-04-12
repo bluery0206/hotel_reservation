@@ -128,6 +128,78 @@
             </div>
         </div>
     </footer>
+    
+    {% if not user.is_authenticated %}
+        <div class="modal fade" id="modal-login" tabindex="-1" aria-labelledby="model-login-title" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="model-login-title">Log in</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form action="">
+                            <div class="mb-3">
+                                <label for="uname" class="form-label">Username</label>
+                                <input type="text" name="uname" id="uname" placeholder="Username" class="form-control">
+                            </div>
+                            <div class="mb-3">
+                                <label for="pwd" class="form-label">Password</label>
+                                <input type="password" name="pwd" id="pwd" placeholder="Password" class="form-control" required>
+                            </div>
+                            
+                            <div>
+                                <button type="submit" class="w-100 btn btn-primary">
+                                    Log in
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary w-100" data-bs-toggle="modal"
+                            data-bs-target="#modal-register">Register</button>
+                    </div>
+                </div>
+            </div>
+        </div>
 
+        <div class="modal fade" id="modal-register" tabindex="-1" aria-labelledby="mode-register-title" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="mode-register-title">Register</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form action="">
+                            <div class="mb-3">
+                                <label for="reg_uname" class="form-label">Username</label>
+                                <input type="text" name="reg_uname" id="reg_uname" placeholder="Must have at least 5 characters" class="form-control" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="reg_email" class="form-label">Email</label>
+                                <input type="email" name="reg_email" id="reg_email" placeholder="example@domain" class="form-control" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="reg_pwd" class="form-label">Password</label>
+                                <input type="password" name="reg_pwd" id="reg_pwd" placeholder="Must have at least 8 characters" class="form-control" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="reg_c_pwd" class="form-label">Confirm Password</label>
+                                <input type="password" name="reg_c_pwd" id="reg_c_pwd" placeholder="Must be identical to the password" class="form-control" required>
+                            </div>
+                            <button type="submit" class="w-100 btn btn-primary">
+                                Register
+                            </button>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary w-100" data-bs-toggle="modal"
+                            data-bs-target="#modal-login">Log in</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
 </body>
 </html
