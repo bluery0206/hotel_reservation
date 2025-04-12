@@ -145,7 +145,12 @@
                             </div>
                             <div class="mb-3">
                                 <label for="pwd" class="form-label">Password</label>
-                                <input type="password" name="pwd" id="pwd" placeholder="Password" class="form-control" required>
+                                <div class="input-group">
+                                    <input type="password" name="pwd" id="pwd" placeholder="Password" class="form-control" required>
+                                    <button type="button" class="input-group-text" onclick="togglePasswordVisiblity('pwd', 'pwd_icon')">
+                                        <i id="pwd_icon" class="fa-solid fa-eye"></i>
+                                    </button>
+                                </div>
                             </div>
                             
                             <div>
@@ -182,11 +187,21 @@
                             </div>
                             <div class="mb-3">
                                 <label for="reg_pwd" class="form-label">Password</label>
-                                <input type="password" name="reg_pwd" id="reg_pwd" placeholder="Must have at least 8 characters" class="form-control" required>
+                                <div class="input-group">
+                                    <input type="password" name="reg_pwd" id="reg_pwd" placeholder="Must have at least 8 characters" class="form-control" required>
+                                    <button type="button" class="input-group-text" onclick="togglePasswordVisiblity('reg_pwd', 'reg_pwd_icon')">
+                                        <i id="reg_pwd_icon" class="fa-solid fa-eye"></i>
+                                    </button>
+                                </div>
                             </div>
                             <div class="mb-3">
                                 <label for="reg_c_pwd" class="form-label">Confirm Password</label>
-                                <input type="password" name="reg_c_pwd" id="reg_c_pwd" placeholder="Must be identical to the password" class="form-control" required>
+                                <div class="input-group">
+                                    <input type="password" name="reg_c_pwd" id="reg_c_pwd" placeholder="Must be identical to the password" class="form-control" required>
+                                    <button type="button" class="input-group-text" onclick="togglePasswordVisiblity('reg_c_pwd', 'reg_c_pwd_icon')">
+                                        <i id="reg_c_pwd_icon" class="fa-solid fa-eye"></i>
+                                    </button>
+                                </div>
                             </div>
                             <button type="submit" class="w-100 btn btn-primary">
                                 Register
@@ -200,6 +215,22 @@
                 </div>
             </div>
         </div>
+
+        <script>
+            
+            function togglePasswordVisiblity(passwordID, iconID) {
+                const field = document.getElementById(passwordID);
+                const icon = document.getElementById(iconID);
+                
+                if (field.getAttribute("type") == "password") {
+                    icon.classList.replace("fa-eye", "fa-eye-slash");
+                    field.setAttribute("type", "text");
+                } else {
+                    icon.classList.replace("fa-eye-slash", "fa-eye");
+                    field.setAttribute("type", "password");
+                }
+            }
+        </script>
     {% endif %}
 </body>
 </html
