@@ -25,7 +25,7 @@
 </head>
 <body>
   
-    <div class="containuer-fluid border">
+    <div class="containuer-fluid">
         <div class="container">
             <div class="row d-flex justify-content-between flew-column flex-sm-row py-2 align-items-center">
                 <div class="col-auto px-1 px-sm-0">
@@ -61,30 +61,36 @@
                         <div class="col-auto">
                             <div class="btn me-2">Reservations</div>
                         </div>
-                        <div class="col-auto">
-                            <div class="dropdown">
-                                <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown"
-                                    aria-expanded="false">
-                                    <img class="object-fit-cover rounded-circle" width="20" height="20"
-                                        src="{% static 'images/Bagpipe.png' %}" alt="bagpipe">
-                                </button>
-                                <ul class="dropdown-menu">
-                                    <li>
-                                        <h6 class="dropdown-header">blueyr0206</h6>
-                                    </li>
-                                    <li><a href="#" class="dropdown-item">Profile</a></li>
-                                    <li><a href="#" class="dropdown-item">Settings</a></li>
-                                    <li><a href="#" class="dropdown-item">Logout</a></li>
-                                </ul>
+                        {% if user.is_authenticated %}
+                            <div class="col-auto">
+                                <div class="dropdown">
+                                    <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown"
+                                        aria-expanded="false">
+                                        <img class="object-fit-cover rounded-circle" width="20" height="20"
+                                            src="{% static 'images/Bagpipe.png' %}" alt="bagpipe">
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                        <li><h6 class="dropdown-header">blueyr0206</h6></li>
+                                        <li><a href="#" class="dropdown-item">Profile</a></li>
+                                        <li><a href="#" class="dropdown-item">Settings</a></li>
+                                        <li><a href="#" class="dropdown-item">Logout</a></li>
+                                    </ul>
+                                </div>
                             </div>
-                        </div>
+                        {% else %}
+                            <div class="col-auto">
+                                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modal-login">
+                                    Login
+                                </button>
+                            </div>
+                        {% endif %}
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <main class="container border">
+    <main>
         {% block content %}
         {% endblock content %}
     </main>
