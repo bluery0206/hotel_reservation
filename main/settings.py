@@ -40,6 +40,7 @@ INSTALLED_APPS = [
 
     'app',
     'django_browser_reload', # for auto reload
+    'django_cleanup.apps.CleanupConfig',
 ]
 
 MIDDLEWARE = [
