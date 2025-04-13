@@ -24,4 +24,4 @@ urlpatterns = [
     path('', include("app.urls")),
 
     path("__reload__/", include("django_browser_reload.urls")), # for auto reloading
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) # for auto deletion of unused media
