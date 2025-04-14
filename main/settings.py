@@ -41,7 +41,8 @@ INSTALLED_APPS = [
 
     'app',
     'django_browser_reload', # for auto reload
-    'django_cleanup.apps.CleanupConfig',
+    'django_cleanup.apps.CleanupConfig', # for auto deletion of unused media
+    'widget_tweaks', # for easy altering of django widgets, specifically when form field has error
 ]
 
 MIDDLEWARE = [
