@@ -50,7 +50,7 @@
                                         <li><h6 class="dropdown-header">blueyr0206</h6></li>
                                         <li><a href="#" class="dropdown-item">Profile</a></li>
                                         <li><a href="#" class="dropdown-item">Settings</a></li>
-                                        <li><a href="#" class="dropdown-item">Logout</a></li>
+                                        <li><a href="{% url 'app-signout' %}" class="dropdown-item">Logout</a></li>
                                     </ul>
                                 </div>
                             </div>
@@ -68,10 +68,20 @@
     </div>
 
     <main>
+        {% if messages %}
+            <div class="messages-list">
+                {% for message in messages %}
+                    <div class="message message-{{ message.tags }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+        
         {% block inner_content %}
         {% endblock inner_content %}
     </main>
-    
+
     <footer class="container-fluid py-5 bg-dark text-white">
         <div class="container">
             <div class="row justify-content-between">

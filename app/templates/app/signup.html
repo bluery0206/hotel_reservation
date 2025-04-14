@@ -1,10 +1,11 @@
 {% extends 'app/base_empty.html' %}
 {% load static %}
+{% load widget_tweaks %}
 
 {% block content %}
     <script src="{% static 'js/toggle_password_visibility.js' %}"></script>
 
-    <div class="border container-fluid vh-100 m-0 p-0 overflow-hidden">
+    <div class="border container-fluid min-vh-100 m-0 p-0 overflow-hidden">
         <div class="row">
             <div class="col">
                 <div class="row py-2 px-4">
@@ -21,11 +22,12 @@
                         </div>
                     </a>
                 </div>
+
                 <div class="row h-100 justify-content-center pt-lg-2">
                     <div class="col-auto w-lg-50 h-auto p-lg-4">
-                        <form action="" method="post">
+                        <form method="post" novalidation>
                             {% csrf_token %}
-                            
+                
                             <div class="mb-3">
                                 <a href="{{ prev }}" class="btn px-0">
                                     <div class="row gx-2">
@@ -44,30 +46,93 @@
                             <div class="mb-3 text-center">
                                 <h4>Get started in seconds!</h4>
                             </div>
+
+                            {% if form.non_field_errors %}
+                                {% for error in form.non_field_errors %}
+                                    <div class="alert alert-danger">
+                                        {{ error }}
+                                    </div>
+                                {% endfor %}
+                            {% endif %}
+
                             <div class="mb-3">
-                                <label for="uname" class="form-label">Creatae your username</label>
-                                <input type="text" name="uname" id="uname" placeholder="example_example02" class="form-control" required>
+                                <label for="{{ form.username.id_for_label }}" class="form-label">Create your username</label>
+                                {% if form.username.errors %}
+                                    {{ form.username|add_class:"is-invalid" }}
+                                {% else %}
+                                    {{ form.username }}
+                                {% endif %}
+
+                                {% if form.username.errors %}
+                                    {% for error in form.username.errors %}
+                                        <div class="invalid-feedback">
+                                            {{ error }}
+                                        </div>
+                                    {% endfor %}
+                                {% endif %}
                             </div>
                             <div class="mb-3">
-                                <label for="email" class="form-label">Your email</label>
-                                <input type="email" name="email" id="email" placeholder="example.domain" class="form-control" required>
+                                <label for="{{ form.email.id_for_label }}" class="form-label">Your email</label>
+
+                                {% if form.email.errors %}
+                                    {{ form.email|add_class:"is-invalid" }}
+                                {% else %}
+                                    {{ form.email }}
+                                {% endif %}
+
+                                {% if form.email.errors %}
+                                    {% for error in form.email.errors %}
+                                            <div class="invalid-feedback">
+                                                {{ error }}
+                                            </div>
+                                        {% endfor %}
+                                {% endif %}
                             </div>
                             <div class="mb-3">
-                                <label for="password" class="form-label">Create your password</label>
+                                <label for="{{ form.password1.id_for_label }}" class="form-label">Create your password</label>
                                 <div class="input-group">
-                                    <input type="password" name="password" id="password" placeholder="Must have at least 8 characters" class="form-control" required>
-                                    <button type="button" class="input-group-text" onclick="togglePasswordVisiblity('password', 'password_icon')">
-                                        <i id="password_icon" class="fa-solid fa-eye"></i>
+
+                                    {% if form.password1.errors %}
+                                        {{ form.password1|add_class:"is-invalid" }}
+                                    {% else %}
+                                        {{ form.password1 }}
+                                    {% endif %}
+
+                                    <button type="button" class="input-group-text" onclick="togglePasswordVisiblity('{{ form.password1.id_for_label }}', '{{ form.password1.id_for_label }}_icon')">
+                                        <i id="{{ form.password1.id_for_label }}_icon" class="fa-solid fa-eye"></i>
                                     </button>
+
+                                    {% if form.password1.errors %}
+                                        {% for error in form.password1.errors %}
+                                            <div class="invalid-feedback">
+                                                {{ error }}
+                                            </div>
+                                        {% endfor %}
+                                    {% endif %}
                                 </div>
                             </div>
                             <div class="mb-3">
-                                <label for="c_password" class="form-label">Confirm your password</label>
+                                <label for="{{ form.password2.id_for_label }}" class="form-label">Confirm your password</label>
+
                                 <div class="input-group">
-                                    <input type="password" name="c_password" id="c_password" placeholder="Must have at least 8 characters" class="form-control" required>
-                                    <button type="button" class="input-group-text" onclick="togglePasswordVisiblity('c_password', 'c_password_icon')">
-                                        <i id="c_password_icon" class="fa-solid fa-eye"></i>
+
+                                    {% if form.password2.errors %}
+                                        {{ form.password2|add_class:"is-invalid" }}
+                                    {% else %}
+                                        {{ form.password2 }}
+                                    {% endif %}
+
+                                    <button type="button" class="input-group-text" onclick="togglePasswordVisiblity('{{ form.password2.id_for_label }}', '{{ form.password2.id_for_label }}_icon')">
+                                        <i id="{{ form.password2.id_for_label }}_icon" class="fa-solid fa-eye"></i>
                                     </button>
+
+                                    {% if form.password2.errors %}
+                                        {% for error in form.password2.errors %}
+                                            <div class="invalid-feedback">
+                                                {{ error }}
+                                            </div>
+                                        {% endfor %}
+                                    {% endif %}
                                 </div>
                             </div>
                             <div class="mb-3">
@@ -88,25 +153,25 @@
                 </div>
             </div>
             <div class="col">
-                <div id="carousel-example-2" class="carousel slide vh-100" data-bs-ride="carousel">
+                <div id="carousel-example-2" class="carousel slide min-vh-100 h-100" data-bs-ride="carousel">
                     <div class="carousel-indicators">
                         <button type="button" data-bs-target="#carousel-example-2" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
                         <button type="button" data-bs-target="#carousel-example-2" data-bs-slide-to="1" aria-label="Slide 2"></button>
                         <button type="button" data-bs-target="#carousel-example-2" data-bs-slide-to="2" aria-label="Slide 3"></button>
                         <button type="button" data-bs-target="#carousel-example-2" data-bs-slide-to="3" aria-label="Slide 3"></button>
                     </div>
-                    <div class="carousel-inner ">
-                        <div class="carousel-item active">
-                            <img src="{% static 'images/hotel-1330850_1280.jpg' %}" class="object-fit-cover vh-100 w-100" alt="First slide">
+                    <div class="carousel-inner h-100">
+                        <div class="carousel-item active h-100">
+                            <img src="{% static 'images/hotel-1330850_1280.jpg' %}" class="object-fit-cover h-100 w-100" alt="First slide">
                         </div>
-                        <div class="carousel-item">
-                            <img src="{% static 'images/hotel-595121_1280.jpg' %}" class="object-fit-cover vh-100 w-100" alt="Second slide">
+                        <div class="carousel-item h-100">
+                            <img src="{% static 'images/hotel-595121_1280.jpg' %}" class="object-fit-cover h-100 w-100" alt="Second slide">
                         </div>
-                        <div class="carousel-item">
-                            <img src="{% static 'images/indoors-4234071_1280.jpg' %}" class="object-fit-cover vh-100 w-100" alt="Third slide">
+                        <div class="carousel-item h-100">
+                            <img src="{% static 'images/indoors-4234071_1280.jpg' %}" class="object-fit-cover h-100 w-100" alt="Third slide">
                         </div>
-                        <div class="carousel-item">
-                            <img src="{% static 'images/inner-space-1026452_1280.jpg' %}" class="object-fit-cover vh-100 w-100" alt="Third slide">
+                        <div class="carousel-item h-100">
+                            <img src="{% static 'images/inner-space-1026452_1280.jpg' %}" class="object-fit-cover h-100 w-100" alt="Third slide">
                         </div>
                     </div>
                     <button class="carousel-control-prev" type="button" data-bs-target="#carousel-example-2" data-bs-slide="prev">
