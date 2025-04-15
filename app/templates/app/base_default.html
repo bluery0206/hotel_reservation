@@ -73,13 +73,25 @@
 
     <main>
         {% if messages %}
-            <div class="messages-list">
+            <div class="toast-container position-fixed bottom-0 end-0 p-2">
                 {% for message in messages %}
-                    <div class="message message-{{ message.tags }}">
-                        {{ message }}
+                    <div class="toast fade show text-bg-{{ message.tags }} border-0 shadow-none" role="status" aria-live="polite" aria-atomic="true"
+                    data-bs-delay="5000" data-bs-autohide="true">
+                        <div class="d-flex">
+                            <div class="toast-body">
+                                {{ message }}
+                            </div>
+                            <div class="me-2 m-auto">
+                                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"
+                                    data-bs-theme="dark"></button>
+                            </div>
+                        </div>
                     </div>
                 {% endfor %}
             </div>
+
+            <!-- Enables toasts/notifications to be shown in the bottom-right for a certain time  -->
+            <script src="{% static 'js/toast_timer.js' %}"></script>
         {% endif %}
         
         {% block inner_content %}
