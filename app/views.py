@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, HttpRequest
 from django.contrib import messages
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import login, logout
 # from django.contrib.auth.decorators import login_required
 # from django.contrib.auth.tokens import default_token_generator
 # from django.contrib.auth.models import User
@@ -54,7 +54,7 @@ def signin(request: HttpRequest) -> HttpResponse:
         'form': form,
     }
 
-    return render(request, "app/signin.html", context)
+    return render(request, "app/auth/signin.html", context)
 
 
 def signup(request: HttpRequest) -> HttpResponse:
@@ -80,7 +80,7 @@ def signup(request: HttpRequest) -> HttpResponse:
         'form': form,
     }
 
-    return render(request, "app/signup.html", context)
+    return render(request, "app/auth/signup.html", context)
 
 
 def signout(request: HttpRequest) -> HttpResponse:
