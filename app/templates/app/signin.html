@@ -89,8 +89,8 @@
                                         <i id="{{ form.password.id_for_label }}_icon" class="fa-solid fa-eye"></i>
                                     </button>
     
-                                    {% if form.username.errors %}
-                                        {% for error in form.username.errors %}
+                                    {% if form.password.errors %}
+                                        {% for error in form.password.errors %}
                                             <div class="invalid-feedback">
                                                 {{ error }}
                                             </div>
