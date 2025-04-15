@@ -136,11 +136,14 @@
                                 </div>
                             </div>
                             <div class="mb-3">
-                                <div class="form-check">
-                                    <input type="checkbox" name="toc_agreement" id="toc_agreement" class="form-check-input" required>
-                                    <label for="toc_agreement" class="form-check-label">
-                                        I agree to the <a href="">Terms and Conditions</a>.
+                                <div class="form-check d-flex align-items-center">
+                                    <input type="checkbox" name="toc_agreement" id="toc_agreement" class="me-2 mb-1 form-check-input" required>
+                                    <label for="toc_agreement" class="form-check-label me-1">
+                                        I agree to the
                                     </label>
+                                    <button type="button" class="btn btn-link p-0 m-0" data-bs-toggle="modal" data-bs-target="#terms-and-conditions">
+                                        Terms and Conditions
+                                    </button>
                                 </div>
                             </div>
                             <div class="mb-3">
@@ -186,4 +189,149 @@
             </div>
         </div>
     </div>
+
+
+    <!-- Terms of Condition Modal/Popup -->
+    <div class="modal fade" id="terms-and-conditions" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="modal-title-2">Terms & Conditions</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="accordion accordion-flush" id="terms-and-conditions-accordion">
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                                    data-bs-target="#collapse-2-1" aria-expanded="false" aria-controls="collapse-2-1">
+                                    Booking & Payment
+                                </button>
+                            </h2>
+                            <div id="collapse-2-1" class="accordion-collapse collapse">
+                                <div class="accordion-body">
+                                    <ul>
+                                        <li>A valid credit/debit card is required to secure your reservation.</li>
+                                        <li>Payment will be processed upon booking (or at check-in, depending on your
+                                            setup).</li>
+                                        <li>Prices are subject to change without prior notice.</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                    data-bs-target="#collapse-2-2" aria-expanded="false" aria-controls="collapse-2-2">
+                                    Cancellation & Refunds
+                                </button>
+                            </h2>
+                            <div id="collapse-2-2" class="accordion-collapse collapse">
+                                <div class="accordion-body">
+                                    <ul>
+                                        <li>Free cancellation is allowed up to <strong>48 hours</strong> before check-in.
+                                        </li>
+                                        <li>Cancellations made within <strong>24 hours</strong> of check-in will incur a
+                                            one-night charge.</li>
+                                        <li>No-shows will be charged the full reservation amount.</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                    data-bs-target="#collapse-2-3" aria-expanded="false" aria-controls="collapse-2-3">
+                                    Check-In & Check-Out
+                                </button>
+                            </h2>
+                            <div id="collapse-2-3" class="accordion-collapse collapse">
+                                <div class="accordion-body">
+                                    <ul>
+                                        <li><strong>Check-in time:</strong> 3:00 PM</li>
+                                        <li><strong>Check-out time:</strong> 11:00 AM</li>
+                                        <li>Early check-in/late check-out may be available upon request (subject to
+                                            availability).</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                    data-bs-target="#collapse-2-4" aria-expanded="false" aria-controls="collapse-2-4">
+                                    Guest Responsibilities
+                                </button>
+                            </h2>
+                            <div id="collapse-2-4" class="accordion-collapse collapse">
+                                <div class="accordion-body">
+                                    <ul>
+                                        <li>Guests are responsible for any damage to the property.</li>
+                                        <li>Excessive noise or disturbances may result in additional charges or eviction.
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                    data-bs-target="#collapse-2-5" aria-expanded="false" aria-controls="collapse-2-5">
+                                    Privacy Policy
+                                </button>
+                            </h2>
+                            <div id="collapse-2-5" class="accordion-collapse collapse">
+                                <div class="accordion-body">
+                                    <ul>
+                                        <li>Personal information collected during booking will only be used for reservation
+                                            purposes.</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                    data-bs-target="#collapse-2-6" aria-expanded="false" aria-controls="collapse-2-6">
+                                    Force Majeure
+                                </button>
+                            </h2>
+                            <div id="collapse-2-6" class="accordion-collapse collapse">
+                                <div class="accordion-body">
+                                    <ul>
+                                        <li>The hotel is not liable for cancellations due to unforeseen circumstances
+                                            (natural disasters, pandemics, etc.).</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                    data-bs-target="#collapse-2-7" aria-expanded="false" aria-controls="collapse-2-7">
+                                    General
+                                </button>
+                            </h2>
+                            <div id="collapse-2-7" class="accordion-collapse collapse">
+                                <div class="accordion-body">
+                                    <ul>
+                                        <li>The hotel reserves the right to refuse service.</li>
+                                        <li>These terms are subject to change without notice.</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+      
 {% endblock%}
