@@ -2,9 +2,9 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse, HttpRequest
 from django.contrib import messages
 from django.contrib.auth import login, logout
-# from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
+from django.contrib.auth.decorators import login_required
 # from django.contrib.auth.tokens import default_token_generator
-# from django.contrib.auth.models import User
 # from django.utils.http import urlsafe_base64_decode
 
 # from pathlib import Path
@@ -92,3 +92,18 @@ def signout(request: HttpRequest) -> HttpResponse:
     logger.debug(output_msg)
     messages.success(request, output_msg)
     return redirect(next if next else 'app-index')
+
+
+@login_required
+def profile(request: HttpRequest, pk:int) -> HttpResponse:
+    """ Shows the user profile """
+
+    user = User.objects.get(pk=pk)
+
+    context = {
+        'prev': request.GET.get("prev", ""),
+        'next': request.GET.get("next", ""),
+        'user': user
+    }
+
+    return render(request, "app/profile/profile.html", context)

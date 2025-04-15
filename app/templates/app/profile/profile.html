@@ -1,0 +1,36 @@
+{% extends 'app/base/base_default.html' %}
+{% load static %}
+
+{% block inner_content %}
+    <div class="container">
+        <div class="row gx-4 p-3">
+            <div class="col-3">
+                <div class="col p-3">
+                    <img class="w-100 object-fit-cover rounded-circle" src="{{ user.profile.image.url }}" alt="{{ user.profile.image.url }}">
+                </div>
+            </div>
+            <div class="col-9">
+                <div class="col p-3">
+                    <h1>{{ user.username }}</h1>
+
+                    <div class="border border-danger p-3 rounded">
+                        <h5>Danger Zone</h5>
+                        <div class="row">
+                            <div class="col-auto">
+                                <a href="" class="btn btn-outline-danger">
+                                    Delete Account
+                                </a>
+                            </div>
+                            <div class="col-auto">
+                                <a href="{% url 'password-change' %}" class="btn btn-outline-danger">
+                                    Change Password
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+{% endblock%}

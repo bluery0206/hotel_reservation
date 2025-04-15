@@ -38,7 +38,7 @@
                 <div class="col-auto px-1 px-sm-0">
                     <div class="row gx-1">
                         <div class="col-auto">
-                            <div class="btn me-2">Home</div>
+                            <a href="{% url 'app-index' %}" class="btn me-2">Home</a>
                         </div>
                         <div class="col-auto">
                             <div class="btn me-2">Reservations</div>
@@ -49,11 +49,11 @@
                                     <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown"
                                         aria-expanded="false">
                                         <img class="object-fit-cover rounded-circle" width="20" height="20"
-                                            src="{% static 'images/Bagpipe.png' %}" alt="bagpipe">
+                                            src="{{ user.profile.image.url }}" alt="bagpipe">
                                     </button>
                                     <ul class="dropdown-menu">
                                         <li><h6 class="dropdown-header">{{ request.user.username }}</h6></li>
-                                        <li><a href="#" class="dropdown-item">Profile</a></li>
+                                        <li><a href="{% url 'profile' request.user.pk %}" class="dropdown-item">Profile</a></li>
                                         <li><a href="#" class="dropdown-item">Settings</a></li>
                                         <li><a href="{% url 'app-signout' %}" class="dropdown-item">Logout</a></li>
                                     </ul>
