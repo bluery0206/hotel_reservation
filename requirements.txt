@@ -3,3 +3,5 @@ django-browser-reload==1.18.0 # for auto reload in development
 django-cleanup==9.0.0 # for automated cleanup of unused media
 django-widget-tweaks==1.5.0 # for easy form.field.class customization
 python-dotenv==1.1.0 # for project environment variables
+django-resized==1.0.3 # for creating thumbnails
+pillow==11.2.1 # for image manipulation

@@ -148,3 +148,13 @@ EMAIL_USE_TLS       = True
 EMAIL_PORT          = 587
 EMAIL_HOST_USER     = os.getenv("EMAIL_HOST_USER")
 EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
+
+
+# django-resized config
+DJANGORESIZED_DEFAULT_SIZE = [1080, 1080] # The default uploaded image size
+DJANGORESIZED_DEFAULT_SCALE = 0.5   # Scale down image dimensions by 50% before applying size.
+DJANGORESIZED_DEFAULT_QUALITY = 90 # Sets JPEG/WebP compression quality (1-100).
+DJANGORESIZED_DEFAULT_KEEP_META = True # Preserves metadata (GPS, camera model, etc.).
+DJANGORESIZED_DEFAULT_FORCE_FORMAT = 'JPEG' # Converts all uploads to JPEG (or 'WEBP', 'PNG').
+DJANGORESIZED_DEFAULT_FORMAT_EXTENSIONS = {'JPEG': ".jpg"}
+DJANGORESIZED_DEFAULT_NORMALIZE_ROTATION = True # Fix orientation
