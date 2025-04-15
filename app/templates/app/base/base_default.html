@@ -1,5 +1,6 @@
-{% extends 'app/base_empty.html' %}
+{% extends 'app/base/base_empty.html' %}
 {% load static %}
+{% load widget_tweaks %}
     
 {% block content %}
     <div class="containuer-fluid">
@@ -73,7 +74,7 @@
 
     <main>
         {% if messages %}
-            <div class="toast-container position-fixed bottom-0 end-0 p-2">
+            <div class="toast-container position-fixed bottom-0 start-0 p-2">
                 {% for message in messages %}
                     <div class="toast fade show text-bg-{{ message.tags }} border-0 shadow-none" role="status" aria-live="polite" aria-atomic="true"
                     data-bs-delay="5000" data-bs-autohide="true">
@@ -93,7 +94,8 @@
             <!-- Enables toasts/notifications to be shown in the bottom-right for a certain time  -->
             <script src="{% static 'js/toast_timer.js' %}"></script>
         {% endif %}
-        
+
+        <!-- Where we will insert other pages contents -->
         {% block inner_content %}
         {% endblock inner_content %}
     </main>
