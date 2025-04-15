@@ -38,12 +38,15 @@ def signin(request: HttpRequest) -> HttpResponse:
 
     if request.method == "POST":
         form = SignInForm(request, data=request.POST)
-
-        logger.debug("POST")
+        logger.debug("User's credentials accepted. Validating...")
 
         if form.is_valid():
+            logger.debug("User's credentials are VALID. Logigng in...")
             login(request, form.get_user())
-            return redirect('app-index')
+            output_msg = f"User ({form.get_user().username}) successfuly signed in."
+            logger.debug(output_msg)
+            messages.success(request, output_msg)
+            return redirect(prev if prev else 'app-signin')
 
     context = {
         'prev': request.GET.get("prev", ""),
@@ -82,9 +85,10 @@ def signup(request: HttpRequest) -> HttpResponse:
 
 def signout(request: HttpRequest) -> HttpResponse:
     """ Logouts the user """
-
-    next = request.GET.get("next", "")
-
+    user = request.user
     logout(request)
-
+    next = request.GET.get("next", "")
+    output_msg = f"User ({user.username}) successfuly signed out."
+    logger.debug(output_msg)
+    messages.success(request, output_msg)
     return redirect(next if next else 'app-index')
