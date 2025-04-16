@@ -129,7 +129,7 @@ class UserUpdateForm(forms.ModelForm):
     first_name = forms.CharField(
         validators = [
             RegexValidator(
-                r'^[a-zA-Z]+$',
+                r'^[a-zA-Z\s]+$',
                 message = "Letters only."
             )
         ],
@@ -141,7 +141,7 @@ class UserUpdateForm(forms.ModelForm):
     last_name = forms.CharField(
         validators = [
             RegexValidator(
-                r'^[a-zA-Z]+$',
+                r'^[a-zA-Z\s]+$',
                 message = "Letters only."
             )
         ],
