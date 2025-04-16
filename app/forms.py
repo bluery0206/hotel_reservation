@@ -23,7 +23,31 @@ class SignUpForm(UserCreationForm):
         ],
         widget = forms.TextInput(attrs={
                 'class' : 'form-control',
-                'placeholder': "example@domain.com",
+                'placeholder': "example_example02",
+        })
+    )
+    first_name = forms.CharField(
+        validators = [
+            RegexValidator(
+                r'^[a-zA-Z]+$',
+                message = "Letters only."
+            )
+        ],
+        widget = forms.TextInput(attrs={
+                'class' : 'form-control',
+                'placeholder': "Juan",
+        })
+    )
+    last_name = forms.CharField(
+        validators = [
+            RegexValidator(
+                r'^[a-zA-Z]+$',
+                message = "Letters only."
+            )
+        ],
+        widget = forms.TextInput(attrs={
+                'class' : 'form-control',
+                'placeholder': "Dela Cruz",
         })
     )
     password1 = forms.CharField(
@@ -53,7 +77,7 @@ class SignUpForm(UserCreationForm):
         model = User
 
         # fields are going to be shown on our form and in what order
-        fields = ['username', 'email', 'password1', 'password2']
+        fields = ['first_name', 'last_name', 'username', 'email', 'password1', 'password2']
 
 
 

@@ -4,9 +4,22 @@
 {% block inner_content %}
     <div class="container">
         <div class="row gx-4 p-3">
-            <div class="col-3">
-                <div class="col p-3">
+            <div class="col-3 p-3 border">
+                <div class="row mb-3">
                     <img class="w-100 object-fit-cover rounded-circle" src="{{ user.profile.image.url }}" alt="{{ user.profile.image.url }}">
+                </div>
+                <div class="row mb-3">
+                    {% if user.first_name and user.last_name %}
+                        <h2 class="mb-0 pb-0">
+                            {{ user.first_name|title }} {{ user.last_name|title }}
+                        </h2>
+                        <h4 class="text-body-secondary">{{ user.username }}</h4>
+                    {% else %}
+                    <h2 class="mb-0 pb-0">
+                        {{ user.username }}
+                    </h2>
+                    
+                    {% endif %}
                 </div>
             </div>
             <div class="col-9">
