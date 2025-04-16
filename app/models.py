@@ -10,7 +10,7 @@ class Profile(models.Model):
         related_name="profile",
     )
     image = ResizedImageField(
-        size = [100, 150],
+        size = [200, 200],
         crop = ['middle', 'center'],
         upload_to = 'profile_images',
         blank = True,
