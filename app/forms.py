@@ -10,7 +10,7 @@ class SignUpForm(UserCreationForm):
     email = forms.EmailField(
         widget = forms.TextInput(attrs={
                 'class' : 'form-control',
-                'placeholder': "example_example02",
+                'placeholder': "example@domain.com",
                 'minlength': 4,
         }),
     )
