@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse, HttpRequest
 from django.contrib import messages
 from django.contrib.auth import login, logout
@@ -13,7 +13,8 @@ from urllib.parse import unquote # For decoding encoded urls (e.g. https%3A%2F%2
 
 import logging
 
-from .forms import SignUpForm, SignInForm
+from .forms import SignUpForm, SignInForm, ProfileUpdateForm, UserUpdateForm
+from .models import Profile
 
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
@@ -111,12 +112,27 @@ def signout(request: HttpRequest) -> HttpResponse:
 def profile(request: HttpRequest, pk:int) -> HttpResponse:
     """ Shows the user profile """
 
-    user = User.objects.get(pk=pk)
+    p = get_object_or_404(Profile, pk=pk)
+    p_form = ProfileUpdateForm(instance=p)
+    u_form = UserUpdateForm(instance=p.user)
+
+    if request.method == "POST":
+        p_form = ProfileUpdateForm(request.POST, request.FILES, instance=p)
+        u_form = UserUpdateForm(request.POST, instance=p.user)
+
+        if p_form.is_valid() and u_form.is_valid():
+            p_form.save()
+            u_form.save()
+            msg = f"User ({u_form.cleaned_data.get("username")}) successfully created."
+            messages.success(request, msg)
+            logger.debug(msg)
 
     context = {
         'prev': request.GET.get("prev", ""),
         'next': request.GET.get("next", ""),
-        'user': user
+        'profile': p,
+        'p_form': p_form,
+        'u_form': u_form,
     }
 
     return render(request, "app/profile/profile.html", context)
