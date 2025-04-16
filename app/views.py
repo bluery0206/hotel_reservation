@@ -4,6 +4,7 @@ from django.contrib import messages
 from django.contrib.auth import login, logout
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
+from urllib.parse import unquote # For decoding encoded urls (e.g. https%3A%2F%2Fexample.com -> https://example.com)
 # from django.contrib.auth.tokens import default_token_generator
 # from django.utils.http import urlsafe_base64_decode
 
@@ -36,21 +37,27 @@ def signin(request: HttpRequest) -> HttpResponse:
     prev = request.GET.get("prev", "")
     next = request.GET.get("next", "")
 
+    # Decodes URL string back into a clickable URL
+    # Example:
+    #   https%3A%2F%2Fexample.com -> https://example.com
+    prev = unquote(prev) if prev else prev
+    next = unquote(next) if next else next
+
     if request.method == "POST":
         form = SignInForm(request, data=request.POST)
         logger.debug("User's credentials accepted. Validating...")
 
         if form.is_valid():
-            logger.debug("User's credentials are VALID. Logigng in...")
+            logger.debug("User's credentials are VALID. Logging in...")
             login(request, form.get_user())
             output_msg = f"User ({form.get_user().username}) successfuly signed in."
             logger.debug(output_msg)
             messages.success(request, output_msg)
-            return redirect(prev if prev else 'app-signin')
+            return redirect(next if next else 'app-signin')
 
     context = {
-        'prev': request.GET.get("prev", ""),
-        'next': request.GET.get("next", ""),
+        'prev': prev,
+        'next': next,
         'form': form,
     }
 
@@ -63,6 +70,12 @@ def signup(request: HttpRequest) -> HttpResponse:
     form = SignUpForm()
     prev = request.GET.get("prev", "")
     next = request.GET.get("next", "")
+
+    # Decodes URL string back into a clickable URL
+    # Example:
+    #   https%3A%2F%2Fexample.com -> https://example.com
+    prev = unquote(prev) if prev else prev
+    next = unquote(next) if next else next
 
     if request.method == "POST":
         form = SignUpForm(request.POST)
@@ -107,3 +120,9 @@ def profile(request: HttpRequest, pk:int) -> HttpResponse:
     }
 
     return render(request, "app/profile/profile.html", context)
+
+
+def dummy(request: HttpRequest) -> HttpResponse:
+    """ A dummy view """
+
+    return render(request, "app/dummy.html")
