@@ -89,8 +89,8 @@ def signup(request: HttpRequest) -> HttpResponse:
             return redirect(next)
 
     context = {
-        'prev': request.GET.get("prev", ""),
-        'next': request.GET.get("next", ""),
+        'prev': prev,
+        'next': next,
         'form': form,
     }
 
@@ -101,11 +101,10 @@ def signout(request: HttpRequest) -> HttpResponse:
     """ Logouts the user """
     user = request.user
     logout(request)
-    next = request.GET.get("next", "")
     output_msg = f"User ({user.username}) successfuly signed out."
     logger.debug(output_msg)
     messages.success(request, output_msg)
-    return redirect(next if next else 'app-index')
+    return redirect('app-index')
 
 
 @login_required
