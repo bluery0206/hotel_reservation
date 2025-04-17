@@ -14,10 +14,10 @@
                     </div>
                     <div class="col align-content-center lh-1">
                         <div class="fw-bolder fs-4">
-                            {{ profile.user.first_name|title }} {{ profile.user.last_name|title }}
+                            {{ profile.user.get_full_name }}
                         </div>
                         <div class="fw-bold fs-5 text-body-secondary p-0 m-0">
-                            {{ profile.user.username }}
+                            {{ profile.user.get_username }}
                         </div>
                     </div>
                 </div>
