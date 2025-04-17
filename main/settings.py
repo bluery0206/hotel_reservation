@@ -151,7 +151,7 @@ EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
 
 
 # django-resized config
-DJANGORESIZED_DEFAULT_SIZE = [1080, 1080] # The default uploaded image size
+DJANGORESIZED_DEFAULT_SIZE = [1920, 1080] # The default uploaded image size
 DJANGORESIZED_DEFAULT_SCALE = 0.5   # Scale down image dimensions by 50% before applying size.
 DJANGORESIZED_DEFAULT_QUALITY = 90 # Sets JPEG/WebP compression quality (1-100).
 DJANGORESIZED_DEFAULT_KEEP_META = True # Preserves metadata (GPS, camera model, etc.).
