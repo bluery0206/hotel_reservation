@@ -123,7 +123,7 @@ def profile(request: HttpRequest, pk:int) -> HttpResponse:
         if p_form.is_valid() and u_form.is_valid():
             p_form.save()
             u_form.save()
-            msg = f"User ({u_form.cleaned_data.get("username")}) successfully created."
+            msg = f"User ({u_form.cleaned_data.get("username")}) successfully updated."
             messages.success(request, msg)
             logger.debug(msg)
 
