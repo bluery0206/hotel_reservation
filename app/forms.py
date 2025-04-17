@@ -30,7 +30,7 @@ class SignUpForm(UserCreationForm):
     first_name = forms.CharField(
         validators = [
             RegexValidator(
-                r'^[a-zA-Z]+$',
+                r'^[a-zA-Z\s]+$',
                 message = "Letters only."
             )
         ],
@@ -42,7 +42,7 @@ class SignUpForm(UserCreationForm):
     last_name = forms.CharField(
         validators = [
             RegexValidator(
-                r'^[a-zA-Z]+$',
+                r'^[a-zA-Z\s]+$',
                 message = "Letters only."
             )
         ],
