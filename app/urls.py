@@ -1,4 +1,4 @@
-from django.urls import path
+from django.urls import path, include, reverse_lazy
 from django.contrib.auth.views import (
 	PasswordResetView,
 	PasswordResetDoneView,
@@ -10,31 +10,62 @@ from django.contrib.auth.views import (
 
 from . import views
 
+
+forgot_password_patterns = [
+	path("", PasswordResetView.as_view(
+			template_name='app/auth/password_reset/password_reset.html',
+			extra_context={},
+		),
+        name="password-reset"
+	),
+	path("email_sent/", PasswordResetDoneView.as_view(
+			template_name='app/auth/password_reset/password_reset_done.html'
+		),
+		name="password_reset_done"
+	),
+	path("validate/<uidb64>/<token>/", PasswordResetConfirmView.as_view(
+			template_name='app/auth/password_reset/password_reset_confirm.html',
+		),
+		name="password_reset_confirm"
+	),
+	path("complete/", PasswordResetCompleteView.as_view(
+		template_name='app/auth/password_reset/password_reset_complete.html'),
+		name="password_reset_complete"),
+]
+
+password_change_patterns = [
+	path("", PasswordChangeView.as_view(
+			template_name='app/auth/password_change/password_change.html',
+		),
+		name="password-change"
+	),
+	path("done/", PasswordChangeDoneView.as_view(
+		template_name='app/auth/password_change/password_change_done.html'),
+		name="password_change_done"),
+]
+
+auth_patterns = [
+	path("signin/", views.signin, name="signin"),
+	path("signup/", views.signup, name="signup"),
+	path("signout/", views.signout, name="signout"),
+]
+
+profile_patterns = [
+	path("<int:pk>/", views.profile, name="index"),
+]
+
+amenity_patterns = [
+	path("", views.amenity, name="amenity-index"),
+]
+
 urlpatterns = [
 	path("", views.index, name="app-index"),
-	path("signin/", views.signin, name="app-signin"),
-	path("signup/", views.signup, name="app-signup"),
-	path("signout/", views.signout, name="app-signout"),
 
-	path("signin/forgot_password/reset/", PasswordResetView.as_view(
-		template_name='app/auth/password_reset/password_reset.html'
-        ),name="password-reset"),
-	path("signin/forgot_password/reset/confirm/<uidb64>/<token>/", PasswordResetConfirmView.as_view(
-        template_name='app/auth/password_reset/password_reset_confirm.html'),
-        name="password_reset_confirm"),
-	path("signin/forgot_password/reset/done/", PasswordResetDoneView.as_view(
-        template_name='app/auth/password_reset/password_reset_done.html'),
-        name="password_reset_done"),
-	path("signin/forgot_password/reset/complete/", PasswordResetCompleteView.as_view(
-        template_name='app/auth/password_reset/password_reset_complete.html'),
-        name="password_reset_complete"),
+	path("dummy/", views.dummy, name="dummy"),
 
-	path("profile/<int:pk>/", views.profile, name="profile"),
-
-	path("profile/password_change/", PasswordChangeView.as_view(
-        template_name='app/auth/password_change/password_change.html'),
-        name="password-change"),
-	path("profile/password_change/done/", PasswordChangeDoneView.as_view(
-        template_name='app/auth/password_change/password_change_done.html'),
-        name="password_change_done"),
+	path("auth/", include((auth_patterns, 'auth'))),
+	path("auth/password_change/", include((password_change_patterns))),
+	path("auth/forgot_password/", include((forgot_password_patterns))),
+	path("profile/", include((profile_patterns, 'profile'))),
+	path("amenity/", include((amenity_patterns, 'amenity'))),
 ]

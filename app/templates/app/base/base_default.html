@@ -53,15 +53,15 @@
                                     </button>
                                     <ul class="dropdown-menu">
                                         <li><h6 class="dropdown-header">{{ request.user.username }}</h6></li>
-                                        <li><a href="{% url 'profile' request.user.profile.pk %}" class="dropdown-item">Profile</a></li>
+                                        <li><a href="{% url 'profile:index' request.user.profile.pk %}" class="dropdown-item">Profile</a></li>
                                         <li><a href="#" class="dropdown-item">Settings</a></li>
-                                        <li><a href="{% url 'app-signout' %}" class="dropdown-item">Logout</a></li>
+                                        <li><a href="{% url 'auth:signout' %}" class="dropdown-item">Logout</a></li>
                                     </ul>
                                 </div>
                             </div>
                         {% else %}
                             <div class="col-auto">
-                                <a class="btn btn-primary" href="{% url 'app-signin' %}?prev={{ request.build_absolute_uri|urlencode }}&next={{ request.build_absolute_uri|urlencode }}">
+                                <a class="btn btn-primary" href="{% url 'auth:signin' %}?prev={{ request.build_absolute_uri|urlencode }}&next={{ request.build_absolute_uri|urlencode }}">
                                     Login
                                 </a>
                             </div>
