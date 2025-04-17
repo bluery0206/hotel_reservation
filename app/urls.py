@@ -55,13 +55,15 @@ profile_patterns = [
 ]
 
 amenity_patterns = [
-	path("", views.amenity, name="amenity-index"),
+	path("", views.amenity_index, name="index"),
+	path("add/", views.add_amenity, name="add"),
+	path("update/<int:pk>/", views.update_amenity, name="update"),
+	path("delete/<int:pk>/", views.delete_amenity, name="delete"),
+	path("delete/all", views.delete_all_amenity, name="delete_all"),
 ]
 
 urlpatterns = [
 	path("", views.index, name="app-index"),
-
-	path("dummy/", views.dummy, name="dummy"),
 
 	path("auth/", include((auth_patterns, 'auth'))),
 	path("auth/password_change/", include((password_change_patterns))),

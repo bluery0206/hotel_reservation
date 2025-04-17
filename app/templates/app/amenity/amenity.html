@@ -1,0 +1,56 @@
+{% extends 'app/base/base_default.html' %}
+{% load static %}
+
+{% block inner_content %}
+    <div class="container pt-lg-4 pt-2">
+        <div class="row justify-content-center">
+            <div class="w-lg-50 ">
+                <div class="row">
+                    <div class="col">
+                        <h4>
+                            Amenities
+                        </h4>
+                    </div>
+                    <div class="col-auto">
+                        <div class="row">
+                            <div class="col-auto">
+                                <a href="{% url 'amenity:add' %}" class="btn btn-success">Add Amenity</a>
+                            </div>
+                            <div class="col-auto">
+                                <a href="{% url 'amenity:delete_all' %}" class="btn btn-danger">Delete All</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <table class="table caption-top table-hover table-responsive">
+                    <caption>List of amenities</caption>
+                    <thead class="table-secondary">
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Name</th>
+                            <th scope="col" class="specific-w-200 text-center">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for amenity in amenities %}
+                            <tr>
+                                <th scope="row">{{ forloop.counter }}</th>
+                                <td>{{ amenity.name }}</td>
+                                <td>
+                                    <div class="row justify-content-center">
+                                        <div class="col-auto">
+                                            <a class="btn btn-success" href="{% url 'amenity:update' amenity.pk %}">Update</a> 
+                                        </div>
+                                        <div class="col-auto">
+                                            <a class="btn btn-danger" href="{% url 'amenity:delete' amenity.pk %}">Delete</a>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock%}

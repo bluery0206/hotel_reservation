@@ -40,9 +40,17 @@
                         <div class="col-auto">
                             <a href="{% url 'app-index' %}" class="btn me-2">Home</a>
                         </div>
+
+                        {% if user.is_staff %}
+                            <div class="col-auto">
+                                <a href="{% url 'amenity:index' %}" class="btn me-2">Amenities</a>
+                            </div>
+                        {% endif %}
+
                         <div class="col-auto">
                             <div class="btn me-2">Reservations</div>
                         </div>
+
                         {% if user.is_authenticated %}
                             <div class="col-auto">
                                 <div class="dropdown">

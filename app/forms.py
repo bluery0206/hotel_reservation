@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.core.validators import RegexValidator, MinLengthValidator, FileExtensionValidator
 
-from .models import Profile
+from .models import Profile, Amenity
 
 class SignUpForm(UserCreationForm):
     """ User Registration Form """
@@ -192,3 +192,24 @@ class SignInForm(AuthenticationForm):
 
         model 	= User
         fields 	= ['username', 'password']
+
+
+class AmenityForm(forms.ModelForm):
+    """ Form for adding amenity"""
+
+    name = forms.CharField(
+        validators = [
+            RegexValidator(
+                r'^[a-zA-Z0-9_.\s-]{2,}$',
+                message = 'Allowed characters: a-z, A-Z, 0-9, "_", ".", "-"'
+            )
+        ],
+        widget = forms.TextInput(attrs={
+            'class' : 'form-control',
+            'placeholder': "TV",
+        })
+    )
+
+    class Meta:
+        model = Amenity
+        fields = ['name']

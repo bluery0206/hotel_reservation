@@ -13,8 +13,14 @@ from urllib.parse import unquote # For decoding encoded urls (e.g. https%3A%2F%2
 
 import logging
 
-from .forms import SignUpForm, SignInForm, ProfileUpdateForm, UserUpdateForm
-from .models import Profile
+from .forms import (
+    SignUpForm, 
+    SignInForm, 
+    ProfileUpdateForm, 
+    UserUpdateForm,
+    AmenityForm
+)
+from .models import Profile, Amenity
 
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
@@ -54,7 +60,7 @@ def signin(request: HttpRequest) -> HttpResponse:
             output_msg = f"User ({form.get_user().username}) successfuly signed in."
             logger.debug(output_msg)
             messages.success(request, output_msg)
-            return redirect(next if next else 'app-signin')
+            return redirect(next if next else 'app-index')
 
     context = {
         'prev': prev,
@@ -122,7 +128,7 @@ def profile(request: HttpRequest, pk:int) -> HttpResponse:
         if p_form.is_valid() and u_form.is_valid():
             p_form.save()
             u_form.save()
-            msg = f"User ({u_form.cleaned_data.get("username")}) successfully updated."
+            msg = f"User({u_form.cleaned_data.get("username")}) successfully updated."
             messages.success(request, msg)
             logger.debug(msg)
 
@@ -137,7 +143,105 @@ def profile(request: HttpRequest, pk:int) -> HttpResponse:
     return render(request, "app/profile/profile.html", context)
 
 
-def dummy(request: HttpRequest) -> HttpResponse:
+def amenity_index(request: HttpRequest) -> HttpResponse:
     """ A dummy view """
 
-    return render(request, "app/dummy.html")
+    amenities = Amenity.objects.all()
+
+    context = {
+        'amenities': amenities,
+    }
+
+    return render(request, "app/amenity/amenity.html", context)
+
+def add_amenity(request):
+    """ View for adding amenity"""
+
+    form = AmenityForm()
+
+    if request.method == "POST":
+        form = AmenityForm(request.POST)
+
+        if form.is_valid():
+            form.save()
+            msg = f"Amenity({form.instance.name}) succesfully added."
+            logger.debug(msg)
+            messages.success(request, msg)
+
+    context = {
+        'form': form,
+        'title': f"Add Amenity",
+        'button_message': "Confirm",
+    }
+
+    return render(request, "app/amenity/amenity_form.html", context)
+
+def update_amenity(request: HttpRequest, pk:int) -> HttpResponse:
+    """ View for adding amenity"""
+
+    amenity = get_object_or_404(Amenity, pk=pk)
+    form = AmenityForm(instance=amenity)
+
+    if request.method == "POST":
+        form = AmenityForm(request.POST, instance=amenity)
+
+        if form.is_valid():
+            form.save()
+            msg = f"Amenity({form.instance.name}) succesfully updated."
+            logger.debug(msg)
+            messages.success(request, msg)
+
+    context = {
+        'form': form,
+        'title': f"Update Amenity({amenity.name})",
+        'button_message': "Confirm changes",
+    }
+
+    return render(request, "app/amenity/amenity_form.html", context)
+
+
+def delete_amenity(request: HttpRequest, pk:int) -> HttpResponse:
+    """ View for adding amenity"""
+
+    amenity = get_object_or_404(Amenity, pk=pk)
+
+    if request.method == "POST":
+        name = amenity.name
+        amenity.delete()
+        msg = f"Amenity({name}) succesfully deleted."
+        logger.debug(msg)
+        messages.success(request, msg)
+
+    context = {
+        'amenity': amenity,
+        'title': f"Delete Amenity({amenity.name})",
+        'description': f"Deleting Amenity({amenity.name}) can't be undone.",
+        'button_message': "Confirm delete",
+    }
+
+    return render(request, "app/base/base_dialog.html", context)
+
+
+def delete_all_amenity(request: HttpRequest) -> HttpResponse:
+    """ View for adding amenity"""
+
+    if request.method == "POST":
+        amenities = Amenity.objects.all()
+        n_amenities = len(amenities)
+
+        for amenity in amenities:
+            amenity.delete()
+
+        msg = f"Amenity ({n_amenities}) succesfully deleted."
+        logger.debug(msg)
+        messages.success(request, msg)
+
+    context = {
+        'title': f"Delete all amenity",
+        'description': f"Deleting Amenities can't be undone.",
+        'button_message': "Confirm delete",
+    }
+
+    return render(request, "app/base/base_dialog.html", context)
+
+

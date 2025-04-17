@@ -19,10 +19,16 @@ class Profile(models.Model):
         default = "default.png",
     )
 
+    def __str__(self):
+        return f"Profile({self.user.get_username()})"
+
 
 class Amenity(models.Model):
     """ Amenities """
     name = models.CharField(max_length=100)
+
+    def __str__(self):
+        return f"Amenity({self.name})"
 
 
 class Room(models.Model):
@@ -40,6 +46,9 @@ class Room(models.Model):
     base_price = models.DecimalField(max_digits=10, decimal_places=2)
     capacity = models.IntegerField()
 
+    def __str__(self):
+        return f"Room({self.type})"
+
 
 class RoomImage(models.Model):
     """ Room Images """
@@ -51,13 +60,18 @@ class RoomImage(models.Model):
         default = "default.png",
     )
 
+
 class Booking(models.Model):
     """ Booking """
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    # Delete THIS instance of User or Room is deleted
+    user = models.ForeignKey(User, on_delete=models.CASCADE) 
     room = models.ForeignKey(Room, on_delete=models.CASCADE)
+
     check_in = models.DateTimeField()  # Start date
     check_out = models.DateTimeField()  # End date
+
     booked_at = models.DateTimeField(auto_now_add=True) 
     book_until = models.DateTimeField()
+
     paid_price = models.DecimalField(max_digits=10, decimal_places=2)  # Final price after discounts
     discount = models.DecimalField(max_digits=5, decimal_places=2, default=0)  # e.g., 10.50%
