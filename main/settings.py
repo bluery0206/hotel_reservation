@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles', # required for auto reload
+    'django_extensions', # Used specifically for debugging (getting all url patterns)
 
     'app',
     'django_browser_reload', # for auto reload
