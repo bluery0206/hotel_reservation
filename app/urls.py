@@ -62,6 +62,14 @@ amenity_patterns = [
 	path("delete/all", views.delete_all_amenity, name="delete_all"),
 ]
 
+room_patterns = [
+	path("", views.room_index, name="index"),
+	path("add/", views.add_room, name="add"),
+	path("update/<int:pk>/", views.update_room, name="update"),
+	path("delete/<int:pk>/", views.delete_room, name="delete"),
+	path("delete/all/", views.delete_all_room, name="delete_all"),
+]
+
 urlpatterns = [
 	path("", views.index, name="app-index"),
 
@@ -70,4 +78,5 @@ urlpatterns = [
 	path("auth/forgot_password/", include((forgot_password_patterns))),
 	path("profile/", include((profile_patterns, 'profile'))),
 	path("amenity/", include((amenity_patterns, 'amenity'))),
+	path("room/", include((room_patterns, 'room'))),
 ]

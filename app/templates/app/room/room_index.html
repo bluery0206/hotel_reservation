@@ -1,0 +1,76 @@
+{% extends 'app/base/base_default.html' %}
+{% load static %}
+
+{% block inner_content %}
+    <div class="container pt-lg-4 pt-2">
+        <div class="row justify-content-center">
+            <div>
+                <div class="row">
+                    <div class="col">
+                        <h4>
+                            Rooms
+                        </h4>
+                    </div>
+                    <div class="col-auto">
+                        <div class="row">
+                            <div class="col-auto">
+                                <a href="{% url 'room:add' %}" class="btn btn-success">Add Room</a>
+                            </div>
+                            <div class="col-auto">
+                                <a href="{% url 'room:delete_all' %}" class="btn btn-danger">Delete All</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <table class="table caption-top table-hover table-responsive">
+                    <caption>List of rooms</caption>
+                    <thead class="table-secondary">
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Name</th>
+                            <th scope="col">Type</th>
+                            <th scope="col">Amenities</th>
+                            <th scope="col">Base Price</th>
+                            <th scope="col">Capacity</th>
+                            <th scope="col" class="specific-w-200 text-center">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for room in rooms %}
+                            <tr>
+                                <th scope="row">{{ forloop.counter }}</th>
+                                <td>{{ room.name }}</td>
+                                <td>
+                                    {% for TYPE in room.RoomTypes %}
+                                        {% if room.type == TYPE %}
+                                            {{ TYPE.label }}
+                                        {% endif %}
+                                    {% endfor %}
+                                </td>
+                                <td>
+                                    {% for amenity in room.amenities.all %}
+                                        <span>
+                                            {{ amenity.name }}{% if forloop.counter != room.amenities.all.count %}, {% endif %}
+                                        </span>
+                                    {% endfor %}
+                                </td>
+                                <td>{{ room.base_price }}</td>
+                                <td>{{ room.capacity }}</td>
+                                <td>
+                                    <div class="row justify-content-center">
+                                        <div class="col-auto">
+                                            <a href="{% url 'room:update' room.pk %}" class="btn btn-success" href="">Update</a> 
+                                        </div>
+                                        <div class="col-auto">
+                                            <a href="{% url 'room:delete' room.pk %}" class="btn btn-danger" href="">Delete</a>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock%}

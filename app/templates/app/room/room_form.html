@@ -1,0 +1,154 @@
+{% extends 'app/base/base_default.html' %}
+{% load static %}
+{% load widget_tweaks %}
+
+{% block inner_content %}
+    <div class="container">
+        <div class="row justify-content-center pt-lg-4 pt-md-2 pt-0">
+            <form method="POST" novalidate>
+                {% csrf_token %}
+
+                <div class="mb-3">
+                    <button type="button" onclick="history.back()" class="btn px-0">
+                        <div class="row gx-2">
+                            <div class="col-auto">
+                                <i class="fa-solid fa-angle-left"></i>
+                            </div>
+                            <div class="col-auto">
+                                Return
+                            </div>
+                        </div>
+                    </button>
+                </div>
+                {% if title %}
+                    <div class="mb-3 text-center">
+                        <h4>{{ title|title }}</h4>
+                    </div>
+                {% endif %}
+                {% if description %}
+                    <div class="mb-3 text-center">
+                        <span class="fst-italic text-body-secondary">{{ description }}</span>
+                    </div>
+                {% endif %}
+                {% if form.non_field_errors %}
+                    {% for error in form.non_field_errors %}
+                        <div class="alert alert-danger">
+                            {{ error }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+                <div class="row">
+                    <div class="col">
+                        <div class="mb-3">
+                            <label for="{{ form.name.id_for_label }}" class="form-label">{{ form.name.label}}</label>
+        
+                            {% if form.name.errors or form.errors %}
+                                {{ form.name|add_class:"is-invalid" }}
+                            {% elif not form.name.errors and request.method == "POST" %}
+                                {{ form.name|add_class:"is-valid"}}
+                            {% else %}
+                                {{ form.name }}
+                            {% endif %}
+
+                            {% if form.name.errors %}
+                                {% for error in form.name.errors %}
+                                    <div class="invalid-feedback">
+                                        {{ error }}
+                                    </div>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                        <div class="mb-3">
+                            <label for="{{ form.type.id_for_label }}" class="form-label">{{ form.type.label}}</label>
+        
+                            {% if form.type.errors or form.errors %}
+                                {{ form.type|add_class:"is-invalid" }}
+                            {% elif not form.type.errors and request.method == "POST" %}
+                                {{ form.type|add_class:"is-valid"}}
+                            {% else %}
+                                {{ form.type }}
+                            {% endif %}
+        
+                            {% if form.type.errors %}
+                                {% for error in form.type.errors %}
+                                    <div class="invalid-feedback">
+                                        {{ error }}
+                                    </div>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                        <div class="mb-3">
+                            <label for="{{ form.base_price.id_for_label }}" class="form-label">{{ form.base_price.label}}</label>
+        
+                            {% if form.base_price.errors or form.errors %}
+                                {{ form.base_price|add_class:"is-invalid" }}
+                            {% elif not form.base_price.errors and request.method == "POST" %}
+                                {{ form.base_price|add_class:"is-valid"}}
+                            {% else %}
+                                {{ form.base_price }}
+                            {% endif %}
+        
+                            {% if form.base_price.errors %}
+                                {% for error in form.base_price.errors %}
+                                    <div class="invalid-feedback">
+                                        {{ error }}
+                                    </div>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                        <div class="mb-3">
+                            <label for="{{ form.capacity.id_for_label }}" class="form-label">{{ form.capacity.label}}</label>
+        
+                            {% if form.capacity.errors or form.errors %}
+                                {{ form.capacity|add_class:"is-invalid" }}
+                            {% elif not form.capacity.errors and request.method == "POST" %}
+                                {{ form.capacity|add_class:"is-valid"}}
+                            {% else %}
+                                {{ form.capacity }}
+                            {% endif %}
+        
+                            {% if form.capacity.errors %}
+                                {% for error in form.capacity.errors %}
+                                    <div class="invalid-feedback">
+                                        {{ error }}
+                                    </div>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="mb-3">
+                            <div class="row justify-content-between">
+                                <div class="fs-6 col-auto">Amenities</div>
+                                <div class="col-auto">
+                                    <a href="{% url 'amenity:add' %}" class="btn btn-sm btn-secondary">Add amenity</a>
+                                    <a href="{% url 'amenity:index' %}" class="btn btn-sm btn-secondary">Amenities</a>
+                                </div>
+                            </div>
+                            <div class="row">
+                                {% for amenity in form.amenities %}
+                                    <div class="col-auto">
+                                        {{ amenity }}
+                                    </div>
+                                {% endfor %}
+                            </div>
+        
+                            {% if form.amenities.errors %}
+                                {% for error in form.amenities.errors %}
+                                    <div class="invalid-feedback">
+                                        {{ error }}
+                                    </div>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <button type="submit" class="btn btn-success w-100">
+                        {{ button_message }}
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock%}

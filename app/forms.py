@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.core.validators import RegexValidator, MinLengthValidator, FileExtensionValidator
 
-from .models import Profile, Amenity
+from .models import Profile, Amenity, Room, RoomImage
 
 class SignUpForm(UserCreationForm):
     """ User Registration Form """
@@ -213,3 +213,77 @@ class AmenityForm(forms.ModelForm):
     class Meta:
         model = Amenity
         fields = ['name']
+
+
+class RoomForm(forms.ModelForm):
+    """ Room Form """
+
+    name = forms.CharField(
+        validators = [
+            RegexValidator(
+                r'^[a-zA-Z0-9_.\)\(\[\]\\\|\s]{4,}$',
+                message = "Allowed characters: a-z, A-Z, 0-9, '_', '.', '\', '(', ')', '[', ']' and ' '."
+            )
+        ],
+        widget = forms.TextInput(attrs={
+            'class' : 'form-control',
+            'placeholder': "E.g.: Classic Standard",
+        })
+    )
+    type = forms.TypedChoiceField(
+        choices=Room.RoomTypes.choices,
+        coerce=int,
+        widget = forms.Select(attrs={
+            'class' : 'form-select',
+        })
+    )
+    amenities = forms.ModelMultipleChoiceField(
+        queryset=Amenity.objects.all(),
+        widget = forms.CheckboxSelectMultiple(attrs={
+            'class' : 'form-check-input',
+        })
+    )
+    base_price = forms.DecimalField(
+        widget = forms.NumberInput(attrs={
+            'class' : 'form-control',
+            'min': 0,
+        })
+    )
+    capacity = forms.IntegerField(
+        widget = forms.NumberInput(attrs={
+            'class' : 'form-control',
+            'min': 0,
+            'step': 1,
+        })
+    )
+
+    class Meta:
+        """ Metadata """
+
+        # save it to the model
+        # Whenever this forms validates, this is going to create a new User
+        model = Room
+
+        # fields are going to be shown on our form and in what order
+        fields = [
+            'name', 
+            'type', 
+            'amenities', 
+            'base_price', 
+            'capacity', 
+        ]
+
+
+class RoomImageForm(forms.ModelForm):
+    """ Profile update Form """
+
+    image = forms.FileField(
+        validators=[FileExtensionValidator(['png', 'jpg', 'jpeg', 'jfif', 'PNG', 'JPG'])],
+        widget = forms.FileInput(attrs={
+            'class' : 'form-control',
+        }),
+    )
+
+    class Meta:
+        model = RoomImage
+        fields = ['image']

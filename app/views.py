@@ -18,9 +18,15 @@ from .forms import (
     SignInForm, 
     ProfileUpdateForm, 
     UserUpdateForm,
-    AmenityForm
+    AmenityForm,
+    RoomForm,
 )
-from .models import Profile, Amenity
+from .models import (
+    Profile, 
+    Amenity,
+    Room,
+    RoomImage,
+)
 
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
@@ -244,4 +250,105 @@ def delete_all_amenity(request: HttpRequest) -> HttpResponse:
 
     return render(request, "app/base/base_dialog.html", context)
 
+
+def room_index(request: HttpRequest) -> HttpResponse:
+    """ A dummy view """
+
+    rooms = Room.objects.all()
+
+    context = {
+        'rooms': rooms,
+    }
+
+    return render(request, "app/room/room_index.html", context)
+
+
+def add_room(request):
+    """ View for adding rooms"""
+
+    form = RoomForm()
+
+    if request.method == "POST":
+        form = RoomForm(request.POST)
+
+        if form.is_valid():
+            form.save()
+            msg = f"{form.instance} succesfully added."
+            logger.debug(msg)
+            messages.success(request, msg)
+
+    context = {
+        'form': form,
+        'title': "Add Room",
+        'button_message': "Confirm",
+    }
+
+    return render(request, "app/room/room_form.html", context)
+
+
+def update_room(request, pk):
+    """ View for adding rooms"""
+
+    room = get_object_or_404(Room, pk=pk)
+    form = RoomForm(instance=room)
+
+    if request.method == "POST":
+        form = RoomForm(request.POST, instance=room)
+
+        if form.is_valid():
+            form.save()
+            msg = f"{form.instance} succesfully updated."
+            logger.debug(msg)
+            messages.success(request, msg)
+
+    context = {
+        'form': form,
+        'title': "Update Room",
+        'button_message': "Confirm",
+    }
+
+    return render(request, "app/room/room_form.html", context)
+
+
+def delete_room(request, pk):
+    """ View for adding rooms"""
+
+    room = get_object_or_404(Room, pk=pk)
+
+    if request.method == "POST":
+        room.delete()
+        msg = f"{room} succesfully deleted."
+        logger.debug(msg)
+        messages.success(request, msg)
+
+    context = {
+        'title': f"Delete Room({room.name})",
+        'description': f"Deleting Room({room.name}) can't be undone.",
+        'button_message': "Confirm delete",
+    }
+
+    return render(request, "app/base/base_dialog.html", context)
+
+
+def delete_all_room(request):
+    """ View for adding rooms"""
+
+    if request.method == "POST":
+        rooms = Room.objects.all()
+        n_rooms = len(rooms)
+
+        for room in rooms:
+            room.delete()
+
+        msg = f"Rooms({n_rooms}) succesfully deleted."
+        logger.debug(msg)
+        messages.success(request, msg)
+
+    context = {
+        'title': "Delete all rooms",
+        'description': "Deleting rooms can't be undone.",
+        'button_message': "Confirm delete",
+    }
+
+    return render(request, "app/base/base_dialog.html", context)
 
