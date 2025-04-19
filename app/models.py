@@ -51,6 +51,7 @@ class Room(models.Model):
         SUITE = 2, "Suit"
 
     name = models.CharField(max_length=100)
+    description = models.TextField()
     type = models.IntegerField(choices=RoomTypes.choices)
     amenities = models.ManyToManyField(Amenity)
     base_price = models.DecimalField(max_digits=10, decimal_places=2)

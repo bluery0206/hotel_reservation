@@ -230,6 +230,19 @@ class RoomForm(forms.ModelForm):
             'placeholder': "E.g.: Classic Standard",
         })
     )
+    description = forms.CharField(
+        validators = [
+            RegexValidator(
+                r'^[a-zA-Z0-9_.\)\(\[\]\\\|\s]{4,}$',
+                message = "Allowed characters: a-z, A-Z, 0-9, '_', '.', '\', '(', ')', '[', ']' and ' '."
+            )
+        ],
+        widget = forms.Textarea(attrs={
+            'rows': 2,
+            'class': 'form-control',
+            'placeholder': "E.g.: Lorem ipsum",
+        })
+    )
     type = forms.TypedChoiceField(
         choices=Room.RoomTypes.choices,
         coerce=int,
@@ -267,6 +280,7 @@ class RoomForm(forms.ModelForm):
         # fields are going to be shown on our form and in what order
         fields = [
             'name', 
+            'description', 
             'type', 
             'amenities', 
             'base_price', 
