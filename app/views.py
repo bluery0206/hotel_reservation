@@ -352,3 +352,14 @@ def delete_all_room(request):
 
     return render(request, "app/base/base_dialog.html", context)
 
+
+def room(request, pk):
+    """ View for adding rooms"""
+    room = get_object_or_404(Room, pk=pk)
+
+    context = {
+        'title': room.name,
+        'room': room,
+    }
+
+    return render(request, "app/room/room.html", context)

@@ -1,0 +1,29 @@
+{% extends 'app/base/base_default.html' %}
+{% load static %}
+
+{% block inner_content %}
+    
+    <div>
+        {{ room.name }}
+    </div>
+    <div>
+        {{ room.description }}
+    </div>
+    <div>
+        {% for TYPE in room.RoomTypes %}
+            {% if TYPE == room.type %}
+                {{ TYPE.label }}
+            {% endif %}
+        {% endfor %}
+    </div>
+    <div>
+        {{ room.amenities }}
+    </div>
+    <div>
+        {{ room.base_price }}
+    </div>
+    <div>
+        {{ room.capacity }}
+    </div>
+
+{% endblock%}
