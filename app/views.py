@@ -176,7 +176,7 @@ def add_amenity(request):
 
     context = {
         'form': form,
-        'title': f"Add Amenity",
+        'title': "Add Amenity",
         'button_message': "Confirm",
     }
 
@@ -243,8 +243,8 @@ def delete_all_amenity(request: HttpRequest) -> HttpResponse:
         messages.success(request, msg)
 
     context = {
-        'title': f"Delete all amenity",
-        'description': f"Deleting Amenities can't be undone.",
+        'title': "Delete all amenity",
+        'description': "Deleting Amenities can't be undone.",
         'button_message': "Confirm delete",
     }
 
