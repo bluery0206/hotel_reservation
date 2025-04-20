@@ -55,7 +55,7 @@ profile_patterns = [
 ]
 
 amenity_patterns = [
-	path("", views.amenity_index, name="index"),
+	path("all/", views.amenity_index, name="index"),
 	path("add/", views.add_amenity, name="add"),
 	path("update/<int:pk>/", views.update_amenity, name="update"),
 	path("delete/<int:pk>/", views.delete_amenity, name="delete"),

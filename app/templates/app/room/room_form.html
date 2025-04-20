@@ -5,31 +5,30 @@
 {% block inner_content %}
     <div class="container">
         <div class="row justify-content-center pt-lg-4 pt-md-2 pt-0">
-            <form method="POST" novalidate>
+            <form method="POST" enctype="multipart/form-data" novalidate>
                 {% csrf_token %}
 
-                <div class="mb-3">
-                    <button type="button" onclick="history.back()" class="btn px-0">
-                        <div class="row gx-2">
-                            <div class="col-auto">
-                                <i class="fa-solid fa-angle-left"></i>
+                <div class="row mb-3">
+                    <div class="col-auto">
+                        <button type="button" onclick="history.back()" class="btn px-0">
+                            <div class="row gx-2">
+                                <div class="col-auto">
+                                    <i class="fa-solid fa-angle-left"></i>
+                                </div>
+                                <div class="col-auto">
+                                    Return
+                                </div>
                             </div>
-                            <div class="col-auto">
-                                Return
+                        </button>
+                    </div>
+                    <div class="col">
+                        {% if title %}
+                            <div class="text-center">
+                                <h4>{{ title|title }}</h4>
                             </div>
-                        </div>
-                    </button>
+                        {% endif %}
+                    </div>
                 </div>
-                {% if title %}
-                    <div class="mb-3 text-center">
-                        <h4>{{ title|title }}</h4>
-                    </div>
-                {% endif %}
-                {% if description %}
-                    <div class="mb-3 text-center">
-                        <span class="fst-italic text-body-secondary">{{ description }}</span>
-                    </div>
-                {% endif %}
                 {% if form.non_field_errors %}
                     {% for error in form.non_field_errors %}
                         <div class="alert alert-danger">
@@ -161,6 +160,28 @@
                             {% endif %}
                         </div>
                     </div>
+                </div>
+                <div class="row">
+                    <label class="form-label">
+                        Images
+                    </label>
+                        <div class="card w-25">
+                            <div class="card-body">
+                                {{ form.image_1 }}
+                            </div>
+                            <img src="{{ room.image_1.url }}" class="card-img-bottom" alt="...">
+                            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#example-modal-2">
+                                Launch modal
+                            </button>
+                        </div>
+
+                        <div class="modal fade" id="example-modal-5" tabindex="-1" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                                ...
+                            </div>
+                            </div>
+                        </div>
                 </div>
                 <div class="mb-3">
                     <button type="submit" class="btn btn-success w-100">
