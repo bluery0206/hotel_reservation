@@ -158,7 +158,7 @@ def amenity_index(request: HttpRequest) -> HttpResponse:
         'amenities': amenities,
     }
 
-    return render(request, "app/amenity/amenity.html", context)
+    return render(request, "app/amenity/amenity_index.html", context)
 
 def add_amenity(request):
     """ View for adding amenity"""
