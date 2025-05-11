@@ -213,63 +213,7 @@ class AmenityForm(forms.ModelForm):
 
 
 class RoomForm(forms.ModelForm):
-    """ Room Form """
-
-    name = forms.CharField(
-        validators = [
-            RegexValidator(
-                r'^[a-zA-Z0-9_.\)\(\[\]\\\|\s]{4,}$',
-                message = "Allowed characters: a-z, A-Z, 0-9, '_', '.', '\', '(', ')', '[', ']' and ' '."
-            )
-        ],
-        widget = forms.TextInput(attrs={
-            'class' : 'form-control',
-            'placeholder': "E.g.: Classic Standard",
-        })
-    )
-    description = forms.CharField(
-        validators = [
-            RegexValidator(
-                r'^[a-zA-Z0-9_.\)\(\[\]\\\|\s]{4,}$',
-                message = "Allowed characters: a-z, A-Z, 0-9, '_', '.', '\', '(', ')', '[', ']' and ' '."
-            )
-        ],
-        widget = forms.Textarea(attrs={
-            'rows': 2,
-            'class': 'form-control',
-            'placeholder': "E.g.: Lorem ipsum",
-        })
-    )
-    type = forms.TypedChoiceField(
-        choices=Room.RoomTypes.choices,
-        coerce=int,
-        widget = forms.Select(attrs={
-            'class' : 'form-select',
-        })
-    )
-    amenities = forms.ModelMultipleChoiceField(
-        queryset=Amenity.objects.all(),
-        widget = forms.CheckboxSelectMultiple(attrs={
-            'class' : 'form-check-input',
-        })
-    )
-    base_price = forms.DecimalField(
-        widget = forms.NumberInput(attrs={
-            'class' : 'form-control',
-            'min': 0,
-        })
-    )
-    capacity = forms.IntegerField(
-        widget = forms.NumberInput(attrs={
-            'class' : 'form-control',
-            'min': 0,
-            'step': 1,
-        })
-    )
-
     class Meta:
-        """ Metadata """
-
         # save it to the model
         # Whenever this forms validates, this is going to create a new User
         model = Room
@@ -283,6 +227,39 @@ class RoomForm(forms.ModelForm):
             'base_price', 
             'capacity', 
         ]
+        widgets = {
+            'name': forms.TextInput(attrs={
+                    'class' : 'form-control',
+                    'placeholder': "E.g.: Classic Standard",
+                }
+            ),
+            "description": forms.Textarea(attrs={
+                    'rows': 2,
+                    'class': 'form-control',
+                    'placeholder': "E.g.: Lorem ipsum",
+                }
+            ),
+            "type": forms.Select(attrs={
+                    'class' : 'form-select',
+                }
+            ),
+            "amenities": forms.CheckboxSelectMultiple(attrs={
+                    'class' : 'form-check-input',
+                    'required' : False,
+                }
+            ),
+            "base_price": forms.NumberInput(attrs={
+                    'class' : 'form-control',
+                    'min': 0,
+                }
+            ),
+            "capacity": forms.NumberInput(attrs={
+                    'class' : 'form-control',
+                    'min': 0,
+                    'step': 1,
+                }
+            )
+        }
 
 
 class RoomImageForm(forms.ModelForm):

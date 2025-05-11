@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django_resized import ResizedImageField
+from django.core.validators import RegexValidator, MinLengthValidator, FileExtensionValidator
 
 from .utils import room_upload_path
 
@@ -50,10 +51,25 @@ class Room(models.Model):
         DELUXE = 1, "Deluxe"
         SUITE = 2, "Suit"
 
-    name = models.CharField(max_length=100)
-    description = models.TextField()
+    name = models.CharField(
+        max_length=100,
+        validators = [
+            RegexValidator(
+                r'^[a-zA-Z0-9_.\)\(\[\]\\\|\s]{4,}$',
+                message = "Allowed characters: a-z, A-Z, 0-9, '_', '.', '\', '(', ')', '[', ']' and ' '."
+            )
+        ],
+    )
+    description = models.TextField(
+        validators = [
+            RegexValidator(
+                r'^[a-zA-Z0-9_.\)\(\[\]\\\|\s]{4,}$',
+                message = "Allowed characters: a-z, A-Z, 0-9, '_', '.', '\', '(', ')', '[', ']' and ' '."
+            )
+        ],
+    )
     type = models.IntegerField(choices=RoomTypes.choices)
-    amenities = models.ManyToManyField(Amenity)
+    amenities = models.ManyToManyField(Amenity, blank=True)
     base_price = models.DecimalField(max_digits=10, decimal_places=2)
     capacity = models.IntegerField()
 
