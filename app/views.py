@@ -25,7 +25,6 @@ from .models import (
     Profile, 
     Amenity,
     Room,
-    RoomImage,
 )
 
 logging.basicConfig(level=logging.DEBUG)
@@ -293,7 +292,7 @@ def update_room(request, pk):
     form = RoomForm(instance=room)
 
     if request.method == "POST":
-        form = RoomForm(request.POST, instance=room)
+        form = RoomForm(request.POST, request.FILES, instance=room)
 
         if form.is_valid():
             form.save()

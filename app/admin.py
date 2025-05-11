@@ -5,7 +5,6 @@ from .models import (
     Booking,
     Amenity,
     Room,
-    RoomImage
 )
 
 admin.site.register([
@@ -13,5 +12,4 @@ admin.site.register([
     Booking,
     Amenity,
     Room,
-    RoomImage
 ])

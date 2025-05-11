@@ -51,6 +51,13 @@ class Room(models.Model):
         DELUXE = 1, "Deluxe"
         SUITE = 2, "Suit"
 
+    image = ResizedImageField(
+        validators=[FileExtensionValidator(['png', 'jpg', 'jpeg', 'jfif', 'PNG', 'JPG'])],
+        upload_to = "images/rooms/",
+        blank = True,
+        null = True,
+        default = "default.png",
+    )
     name = models.CharField(
         max_length=100,
         validators = [
@@ -75,17 +82,6 @@ class Room(models.Model):
 
     def __str__(self):
         return f"Room({self.type}: {self.name})"
-
-
-class RoomImage(models.Model):
-    """ Room Images """
-    room = models.ForeignKey(Room, on_delete=models.CASCADE, related_name='image')
-    image = ResizedImageField(
-        upload_to = room_upload_path,
-        blank = True,
-        null = True,
-        default = "default.png",
-    )
 
 
 class Booking(models.Model):

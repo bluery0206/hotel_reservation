@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.core.validators import RegexValidator, MinLengthValidator, FileExtensionValidator
 
-from .models import Profile, Amenity, Room, RoomImage
+from .models import Profile, Amenity, Room
 
 class SignUpForm(UserCreationForm):
     """ User Registration Form """
@@ -220,6 +220,7 @@ class RoomForm(forms.ModelForm):
 
         # fields are going to be shown on our form and in what order
         fields = [
+            'image', 
             'name', 
             'description', 
             'type', 
@@ -228,6 +229,10 @@ class RoomForm(forms.ModelForm):
             'capacity', 
         ]
         widgets = {
+            'image': forms.FileInput(attrs={
+                    'class' : 'form-control',
+                }
+            ),
             'name': forms.TextInput(attrs={
                     'class' : 'form-control',
                     'placeholder': "E.g.: Classic Standard",
@@ -261,17 +266,3 @@ class RoomForm(forms.ModelForm):
             )
         }
 
-
-class RoomImageForm(forms.ModelForm):
-    """ Profile update Form """
-
-    image = forms.FileField(
-        validators=[FileExtensionValidator(['png', 'jpg', 'jpeg', 'jfif', 'PNG', 'JPG'])],
-        widget = forms.FileInput(attrs={
-            'class' : 'form-control',
-        }),
-    )
-
-    class Meta:
-        model = RoomImage
-        fields = ['image']

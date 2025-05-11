@@ -2,4 +2,5 @@ venv
 *__pycache__/
 db.sqlite3
 .env
-media/profile_images/
+media/images/profile_images/*
+media/images/rooms/*
