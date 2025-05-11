@@ -178,9 +178,6 @@ class SignInForm(AuthenticationForm):
         })
     )
     password = forms.CharField(
-        validators = [
-            MinLengthValidator(8)
-        ],
         widget = forms.PasswordInput(attrs={
             'class' : 'form-control',
             'placeholder': "Your password",
