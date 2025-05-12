@@ -31,7 +31,8 @@ logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
 
-# Create your views here.
+
+@login_required
 def index(request: HttpRequest) -> HttpResponse:
     """ Shows the index/home/dashboard page """
 
@@ -108,6 +109,8 @@ def signup(request: HttpRequest) -> HttpResponse:
     return render(request, "app/auth/signup.html", context)
 
 
+
+@login_required
 def signout(request: HttpRequest) -> HttpResponse:
     """ Logouts the user """
     user = request.user
@@ -116,6 +119,7 @@ def signout(request: HttpRequest) -> HttpResponse:
     logger.debug(output_msg)
     messages.success(request, output_msg)
     return redirect('app-index')
+
 
 
 @login_required
@@ -148,6 +152,8 @@ def profile(request: HttpRequest, pk:int) -> HttpResponse:
     return render(request, "app/profile/profile.html", context)
 
 
+
+@login_required
 def amenity_index(request: HttpRequest) -> HttpResponse:
     """ A dummy view """
 
@@ -159,6 +165,9 @@ def amenity_index(request: HttpRequest) -> HttpResponse:
 
     return render(request, "app/amenity/amenity_index.html", context)
 
+
+
+@login_required
 def add_amenity(request):
     """ View for adding amenity"""
 
@@ -181,6 +190,9 @@ def add_amenity(request):
 
     return render(request, "app/amenity/amenity_form.html", context)
 
+
+
+@login_required
 def update_amenity(request: HttpRequest, pk:int) -> HttpResponse:
     """ View for adding amenity"""
 
@@ -205,6 +217,8 @@ def update_amenity(request: HttpRequest, pk:int) -> HttpResponse:
     return render(request, "app/amenity/amenity_form.html", context)
 
 
+
+@login_required
 def delete_amenity(request: HttpRequest, pk:int) -> HttpResponse:
     """ View for adding amenity"""
 
@@ -227,6 +241,8 @@ def delete_amenity(request: HttpRequest, pk:int) -> HttpResponse:
     return render(request, "app/base/base_dialog.html", context)
 
 
+
+@login_required
 def delete_all_amenity(request: HttpRequest) -> HttpResponse:
     """ View for adding amenity"""
 
@@ -250,6 +266,8 @@ def delete_all_amenity(request: HttpRequest) -> HttpResponse:
     return render(request, "app/base/base_dialog.html", context)
 
 
+
+@login_required
 def room_index(request: HttpRequest) -> HttpResponse:
     """ A dummy view """
 
@@ -262,6 +280,8 @@ def room_index(request: HttpRequest) -> HttpResponse:
     return render(request, "app/room/room_index.html", context)
 
 
+
+@login_required
 def add_room(request):
     """ View for adding rooms"""
 
@@ -285,6 +305,8 @@ def add_room(request):
     return render(request, "app/room/room_form.html", context)
 
 
+
+@login_required
 def update_room(request, pk):
     """ View for adding rooms"""
 
@@ -309,6 +331,8 @@ def update_room(request, pk):
     return render(request, "app/room/room_form.html", context)
 
 
+
+@login_required
 def delete_room(request, pk):
     """ View for adding rooms"""
 
@@ -329,6 +353,8 @@ def delete_room(request, pk):
     return render(request, "app/base/base_dialog.html", context)
 
 
+
+@login_required
 def delete_all_room(request):
     """ View for adding rooms"""
 
@@ -352,6 +378,8 @@ def delete_all_room(request):
     return render(request, "app/base/base_dialog.html", context)
 
 
+
+@login_required
 def room(request, pk):
     """ View for adding rooms"""
     room = get_object_or_404(Room, pk=pk)
