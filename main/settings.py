@@ -139,7 +139,8 @@ MEDIA_URL = "/media/"
 
 
 # Unauthorized Accesses Redirect Path
-LOGIN_REDIRECT_URL  = 'app-index'
+LOGIN_REDIRECT_URL  = 'auth:signin'
+LOGIN_URL  = 'auth:signin'
 
 
 # For emailing
