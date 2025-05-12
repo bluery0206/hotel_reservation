@@ -3,8 +3,6 @@
 
 <!DOCTYPE html>
 
-<!-- data-bs-core sets the halfmoon theme: default, modern, elegant -->
-<!-- data-bs-theme sets the theme: light, dark -->
 <html lang="en" data-bs-core="modern" data-bs-theme="dark"> 
 <head>
     <meta charset="UTF-8">
@@ -23,11 +21,7 @@
     <script src="https://kit.fontawesome.com/1c724ccd5b.js" crossorigin="anonymous"></script>
 
     <title>
-        {% if title %}
-            Resho | {{ title }}
-        {% else %}
-            Resho
-        {% endif %}
+        Resho{% if title %} | {{ title }} {% endif %}
     </title>
 </head>
 <body>

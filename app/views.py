@@ -13,19 +13,8 @@ from urllib.parse import unquote # For decoding encoded urls (e.g. https%3A%2F%2
 
 import logging
 
-from .forms import (
-    SignUpForm, 
-    SignInForm, 
-    ProfileUpdateForm, 
-    UserUpdateForm,
-    AmenityForm,
-    RoomForm,
-)
-from .models import (
-    Profile, 
-    Amenity,
-    Room,
-)
+from . import forms, models
+
 
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
@@ -37,7 +26,7 @@ def index(request: HttpRequest) -> HttpResponse:
     """ Shows the index/home/dashboard page """
 
     context = {
-    #     'form': UserRegisterForm()
+        "rooms": models.Room.objects.all(),
     }
 
     return render(request, "app/index.html", context)
@@ -46,18 +35,16 @@ def index(request: HttpRequest) -> HttpResponse:
 def signin(request: HttpRequest) -> HttpResponse:
     """ User Login View """
 
-    form = SignInForm()
-    prev = request.GET.get("prev", "")
-    next = request.GET.get("next", "")
+    form = forms.SignInForm()
 
     # Decodes URL string back into a clickable URL
     # Example:
     #   https%3A%2F%2Fexample.com -> https://example.com
-    prev = unquote(prev) if prev else prev
-    next = unquote(next) if next else next
+    prev = unquote(request.GET.get("prev", "")) 
+    next = unquote(request.GET.get("next", ""))
 
     if request.method == "POST":
-        form = SignInForm(request, data=request.POST)
+        form = forms.SignInForm(request, data=request.POST)
         logger.debug("User's credentials accepted. Validating...")
 
         if form.is_valid():
@@ -80,18 +67,16 @@ def signin(request: HttpRequest) -> HttpResponse:
 def signup(request: HttpRequest) -> HttpResponse:
     """ User Register View """
 
-    form = SignUpForm()
-    prev = request.GET.get("prev", "")
-    next = request.GET.get("next", "")
+    form = forms.SignUpForm()
 
     # Decodes URL string back into a clickable URL
     # Example:
     #   https%3A%2F%2Fexample.com -> https://example.com
-    prev = unquote(prev) if prev else prev
-    next = unquote(next) if next else next
+    prev = unquote(request.GET.get("prev", ""))
+    next = unquote(request.GET.get("next", ""))
 
     if request.method == "POST":
-        form = SignUpForm(request.POST)
+        form = forms.SignUpForm(request.POST)
 
         if form.is_valid():
             form.save()
@@ -127,12 +112,12 @@ def profile(request: HttpRequest, pk:int) -> HttpResponse:
     """ Shows the user profile """
 
     p = get_object_or_404(Profile, pk=pk)
-    p_form = ProfileUpdateForm(instance=p)
-    u_form = UserUpdateForm(instance=p.user)
+    p_form = forms.ProfileUpdateForm(instance=p)
+    u_form = forms.UserUpdateForm(instance=p.user)
 
     if request.method == "POST":
-        p_form = ProfileUpdateForm(request.POST, request.FILES, instance=p)
-        u_form = UserUpdateForm(request.POST, instance=p.user)
+        p_form = forms.ProfileUpdateForm(request.POST, request.FILES, instance=p)
+        u_form = forms.UserUpdateForm(request.POST, instance=p.user)
 
         if p_form.is_valid() and u_form.is_valid():
             p_form.save()
@@ -153,11 +138,10 @@ def profile(request: HttpRequest, pk:int) -> HttpResponse:
 
 
 
-@login_required
 def amenity_index(request: HttpRequest) -> HttpResponse:
     """ A dummy view """
 
-    amenities = Amenity.objects.all()
+    amenities = models.Amenity.objects.all()
 
     context = {
         'amenities': amenities,
@@ -171,10 +155,10 @@ def amenity_index(request: HttpRequest) -> HttpResponse:
 def add_amenity(request):
     """ View for adding amenity"""
 
-    form = AmenityForm()
+    form = forms.AmenityForm()
 
     if request.method == "POST":
-        form = AmenityForm(request.POST)
+        form = forms.AmenityForm(request.POST)
 
         if form.is_valid():
             form.save()
@@ -196,11 +180,11 @@ def add_amenity(request):
 def update_amenity(request: HttpRequest, pk:int) -> HttpResponse:
     """ View for adding amenity"""
 
-    amenity = get_object_or_404(Amenity, pk=pk)
-    form = AmenityForm(instance=amenity)
+    amenity = get_object_or_404(models.Amenity, pk=pk)
+    form = forms.AmenityForm(instance=amenity)
 
     if request.method == "POST":
-        form = AmenityForm(request.POST, instance=amenity)
+        form = forms.AmenityForm(request.POST, instance=amenity)
 
         if form.is_valid():
             form.save()
@@ -222,7 +206,7 @@ def update_amenity(request: HttpRequest, pk:int) -> HttpResponse:
 def delete_amenity(request: HttpRequest, pk:int) -> HttpResponse:
     """ View for adding amenity"""
 
-    amenity = get_object_or_404(Amenity, pk=pk)
+    amenity = get_object_or_404(models.Amenity, pk=pk)
 
     if request.method == "POST":
         name = amenity.name
@@ -247,7 +231,7 @@ def delete_all_amenity(request: HttpRequest) -> HttpResponse:
     """ View for adding amenity"""
 
     if request.method == "POST":
-        amenities = Amenity.objects.all()
+        amenities = models.Amenity.objects.all()
         n_amenities = len(amenities)
 
         for amenity in amenities:
@@ -267,11 +251,10 @@ def delete_all_amenity(request: HttpRequest) -> HttpResponse:
 
 
 
-@login_required
 def room_index(request: HttpRequest) -> HttpResponse:
     """ A dummy view """
 
-    rooms = Room.objects.all()
+    rooms = models.Room.objects.all()
 
     context = {
         'rooms': rooms,
@@ -285,10 +268,10 @@ def room_index(request: HttpRequest) -> HttpResponse:
 def add_room(request):
     """ View for adding rooms"""
 
-    form = RoomForm()
+    form = forms.RoomForm()
 
     if request.method == "POST":
-        form = RoomForm(request.POST)
+        form = forms.RoomForm(request.POST)
 
         if form.is_valid():
             form.save()
@@ -310,11 +293,11 @@ def add_room(request):
 def update_room(request, pk):
     """ View for adding rooms"""
 
-    room = get_object_or_404(Room, pk=pk)
-    form = RoomForm(instance=room)
+    room = get_object_or_404(models.Room, pk=pk)
+    form = forms.RoomForm(instance=room)
 
     if request.method == "POST":
-        form = RoomForm(request.POST, request.FILES, instance=room)
+        form = forms.RoomForm(request.POST, request.FILES, instance=room)
 
         if form.is_valid():
             form.save()
@@ -336,7 +319,7 @@ def update_room(request, pk):
 def delete_room(request, pk):
     """ View for adding rooms"""
 
-    room = get_object_or_404(Room, pk=pk)
+    room = get_object_or_404(models.Room, pk=pk)
 
     if request.method == "POST":
         room.delete()
@@ -359,7 +342,7 @@ def delete_all_room(request):
     """ View for adding rooms"""
 
     if request.method == "POST":
-        rooms = Room.objects.all()
+        rooms = rooms.Room.objects.all()
         n_rooms = len(rooms)
 
         for room in rooms:
@@ -379,10 +362,9 @@ def delete_all_room(request):
 
 
 
-@login_required
 def room(request, pk):
     """ View for adding rooms"""
-    room = get_object_or_404(Room, pk=pk)
+    room = get_object_or_404(models.Room, pk=pk)
 
     context = {
         'title': room.name,
