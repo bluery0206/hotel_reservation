@@ -4,10 +4,16 @@ from django_resized import ResizedImageField
 from django.core.validators import RegexValidator, MinLengthValidator, FileExtensionValidator
 
 from .utils import room_upload_path
-
+from uuid import uuid4
 
 class Profile(models.Model):
     """ Profile """
+    uuid = models.UUIDField(
+        primary_key=True,
+        editable=False,
+        auto_created=True,
+        default=uuid4,
+    )
     user = models.OneToOneField(
         User,
         on_delete=models.CASCADE,
@@ -28,6 +34,12 @@ class Profile(models.Model):
 
 class Amenity(models.Model):
     """ Amenities """
+    uuid = models.UUIDField(
+        primary_key=True,
+        editable=False,
+        auto_created=True,
+        default=uuid4,
+    )
     name = models.CharField(max_length=100)
     fee = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
 
@@ -42,13 +54,19 @@ class Amenity(models.Model):
 class Room(models.Model):
     """ Room """
 
-    class RoomTypes(models.IntegerChoices):
+    class RoomTypes(models.TextChoices):
         """ Room Types"""
 
-        STANDARD = 0, "Standard"
-        DELUXE = 1, "Deluxe"
-        SUITE = 2, "Suit"
+        STANDARD = "ST", "Standard"
+        DELUXE = "DL", "Deluxe"
+        SUITE = "SU", "Suit"
 
+    uuid = models.UUIDField(
+        primary_key=True,
+        editable=False,
+        auto_created=True,
+        default=uuid4,
+    )
     image = ResizedImageField(
         validators=[FileExtensionValidator(['png', 'jpg', 'jpeg', 'jfif', 'PNG', 'JPG'])],
         upload_to = "images/rooms/",
@@ -73,8 +91,8 @@ class Room(models.Model):
             )
         ],
     )
-    type = models.IntegerField(choices=RoomTypes.choices)
-    amenities = models.ManyToManyField(Amenity, blank=True)
+    type = models.CharField(choices=RoomTypes.choices)
+    amenities = models.ManyToManyField(Amenity, blank=True, related_name="rooms")
     base_price = models.DecimalField(max_digits=10, decimal_places=2)
     capacity = models.IntegerField()
     is_available = models.BooleanField(default=True)
@@ -89,6 +107,12 @@ class Booking(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE) 
     room = models.ForeignKey(Room, on_delete=models.CASCADE)
 
+    uuid = models.UUIDField(
+        primary_key=True,
+        editable=False,
+        auto_created=True,
+        default=uuid4,
+    )
     check_in = models.DateTimeField()  # Start date
     check_out = models.DateTimeField()  # End date
 
