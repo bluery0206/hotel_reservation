@@ -2,7 +2,6 @@
 {% load static %}
 
 {% block inner_content %}
-    {% comment %}
         <div id="carousel-example-2" class="carousel slide overflow-hidden specific-h-400" data-bs-ride="carousel">
             <div class="carousel-indicators">
                 <button type="button" data-bs-target="#carousel-example-2" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
@@ -33,9 +32,8 @@
                 <span class="visually-hidden">Next</span>
             </button>
         </div>
-    {% endcomment %}
 
-    <div class="container py-5">
+    <div class="container p-4 mb-4">
         <div class="row text-center">
             <div class="col-auto">
                 <h4 class="fs-3">WELCOME TO RESHO</h4>
@@ -50,28 +48,39 @@
         </div>
     </div>
 
-    <div class="container py-4">
-        <div class="row border text-center">
+    <div class="container p-2 mb-4">
+        <div class="row justify-content-between">
             <div class="col-auto">
                 <h4 class="fs-3">Featured Rooms</h4>
             </div>
+            <div class="col-auto">
+                <a href="{% url 'room:index' %}" class="btn btn-link">
+                    See more
+                </a>
+            </div>
         </div>
-        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 border">
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 ">
             {% for room in rooms %}
                 <div class="col">
-                    <div class="card border border-danger">
-                        <img src="{{ room.image.url }}" class="card-img-top object-fit-cover" alt="{{ room.image.url }}" height="240">
+                    <div class="card">
+                        <img src="{{ room.image.url }}" class="card-img-top object-fit-cover" alt="{{ room.image.url }}" height="150">
                         <div class="card-body">
-                            <h5 class="card-title py-1 m-0">{{ room.name }}</h5>
-                            <p class="card-text fs-5 m-0 d-flex align-items-center">
-                                <div class="card-title fst-italic">
-                                    {{ room.description }}
-                                </div>
-                                <div class="card-title">Type: {{ room.get_type_display }}</div>
-                                <div class="card-title">Capacity: {{ room.capacity }}</div>
-                                {% if room.amenities.all %}
-                                    Amenities:
-                                    <div class="row gx-2">
+                            <h5 class="card-title py-1 m-0">
+                                <a href="{% url 'room:view' room.pk %}">
+                                    [{{ room.type }}] 
+                                    {{ room.name }}
+                                </a>
+                            </h5>
+                            <div class="card-text">
+                                <span class="fw-bol">Capacity:</span>
+                                <span>{{ room.get_room_display }}</span>
+                            </div>
+                            {% if room.amenities.all %}
+                                <div class="card-text mb-2">
+                                    <div class="mb-1">
+                                        Amenities:
+                                    </div>
+                                    <div class="row gx-2 gy-2">
                                         {% for amenity in room.amenities.all %}
                                             <div class="col-auto">
                                                 <div class="border border-secondary rounded py-1 px-2">
@@ -80,13 +89,15 @@
                                             </div>
                                         {% endfor %}
                                     </div>
-                                {% endif %}
-                                <strong class="text-success-emphasis me-2">Base Price: {{ room.base_price }}</strong>
-                                <s class="fs-6 text-body-secondary">$200</s>
+                                </div>
+                            {% endif %}
+                            <p class="card-text fs-6 m-0 d-flex align-items-center">
+                                <strong class="text-success-emphasis me-2">Price: {{ room.price }}</strong>
                             </p>
-                            <!-- <a href="#" class="stretched-link btn btn-success btn-lg w-100">
-                                Add to bag
-                            </a> -->
+
+                            <a href="#" class="btn btn-success btn-lg w-100">
+                                Reserve
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -94,19 +105,4 @@
         </div>
     </div>
 
-    <div class="container py-4">
-        <div class="card specific-w-300 mw-100 mx-auto">
-            <img src="..." class="card-img-top" alt="..." height="240">
-            <div class="card-body">
-                <h5 class="card-title">Cool Neon Kicks</h5>
-                <p class="card-text fs-5 d-flex align-items-center">
-                    <strong class="text-success-emphasis me-2">$129</strong>
-                    <s class="fs-6 text-body-secondary">$200</s>
-                </p>
-                <a href="#" class="stretched-link btn btn-success btn-lg w-100">
-                    Add to bag
-                </a>
-            </div>
-        </div>
-    </div>
 {% endblock%}
