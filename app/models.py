@@ -100,6 +100,17 @@ class Room(models.Model):
     def __str__(self):
         return f"Room({self.type}: {self.name})"
 
+    
+    @property
+    def price(self) -> float:
+        if self.amenities.exists():
+            # Calculate the total price based on the amenities
+            total_price = self.base_price
+            for amenity in self.amenities.all():
+                total_price += amenity.fee
+            return total_price
+        return self.base_price
+
 
 class Booking(models.Model):
     """ Booking """
