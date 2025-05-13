@@ -51,24 +51,24 @@ auth_patterns = [
 ]
 
 profile_patterns = [
-	path("<int:pk>/", views.profile, name="index"),
+	path("<uuid:pk>/", views.profile, name="index"),
 ]
 
 amenity_patterns = [
 	path("all/", views.amenity_index, name="index"),
 	path("add/", views.add_amenity, name="add"),
-	path("update/<int:pk>/", views.update_amenity, name="update"),
-	path("delete/<int:pk>/", views.delete_amenity, name="delete"),
+	path("update/<uuid:pk>/", views.update_amenity, name="update"),
+	path("delete/<uuid:pk>/", views.delete_amenity, name="delete"),
 	path("delete/all", views.delete_all_amenity, name="delete_all"),
 ]
 
 room_patterns = [
 	path("all/", views.room_index, name="index"),
 	path("add/", views.add_room, name="add"),
-	path("update/<int:pk>/", views.update_room, name="update"),
-	path("delete/<int:pk>/", views.delete_room, name="delete"),
+	path("update/<uuid:pk>/", views.update_room, name="update"),
+	path("delete/<uuid:pk>/", views.delete_room, name="delete"),
 	path("delete/all/", views.delete_all_room, name="delete_all"),
-	path("<int:pk>/", views.room, name="view"),
+	path("view/<uuid:pk>/", views.view_room, name="view"),
 ]
 
 urlpatterns = [
