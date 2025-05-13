@@ -207,9 +207,16 @@ class AmenityForm(forms.ModelForm):
         })
     )
 
+    fee = forms.DecimalField(
+        widget = forms.TextInput(attrs={
+            'class' : 'form-control',
+            'placeholder': "0.00",
+        })
+    )
+
     class Meta:
         model = Amenity
-        fields = ['name']
+        fields = ['name', 'fee']
 
 
 class RoomForm(forms.ModelForm):
