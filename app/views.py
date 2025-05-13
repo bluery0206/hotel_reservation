@@ -22,17 +22,17 @@ logger = logging.getLogger(__name__)
 
 
 @login_required
-def index(request: HttpRequest) -> HttpResponse:
+def index(request):
     """ Shows the index/home/dashboard page """
 
     context = {
-        "rooms": models.Room.objects.all(),
+        "rooms": models.Room.objects.all().order_by('-date_update')[:12],
     }
 
     return render(request, "app/index.html", context)
 
 
-def signin(request: HttpRequest) -> HttpResponse:
+def signin(request):
     """ User Login View """
 
     form = forms.SignInForm()
@@ -64,7 +64,7 @@ def signin(request: HttpRequest) -> HttpResponse:
     return render(request, "app/auth/signin.html", context)
 
 
-def signup(request: HttpRequest) -> HttpResponse:
+def signup(request):
     """ User Register View """
 
     form = forms.SignUpForm()
@@ -96,7 +96,7 @@ def signup(request: HttpRequest) -> HttpResponse:
 
 
 @login_required
-def signout(request: HttpRequest) -> HttpResponse:
+def signout(request):
     """ Logouts the user """
     user = request.user
     logout(request)
@@ -108,10 +108,10 @@ def signout(request: HttpRequest) -> HttpResponse:
 
 
 @login_required
-def profile(request: HttpRequest, pk:int) -> HttpResponse:
+def profile(request, pk:int):
     """ Shows the user profile """
 
-    p = get_object_or_404(Profile, pk=pk)
+    p = get_object_or_404(models.Profile, pk=pk)
     p_form = forms.ProfileUpdateForm(instance=p)
     u_form = forms.UserUpdateForm(instance=p.user)
 
@@ -138,7 +138,7 @@ def profile(request: HttpRequest, pk:int) -> HttpResponse:
 
 
 
-def amenity_index(request: HttpRequest) -> HttpResponse:
+def amenity_index(request):
     """ A dummy view """
 
     amenities = models.Amenity.objects.all()
@@ -177,7 +177,7 @@ def add_amenity(request):
 
 
 @login_required
-def update_amenity(request: HttpRequest, pk:int) -> HttpResponse:
+def update_amenity(request, pk:int):
     """ View for adding amenity"""
 
     amenity = get_object_or_404(models.Amenity, pk=pk)
@@ -203,7 +203,7 @@ def update_amenity(request: HttpRequest, pk:int) -> HttpResponse:
 
 
 @login_required
-def delete_amenity(request: HttpRequest, pk:int) -> HttpResponse:
+def delete_amenity(request, pk:int):
     """ View for adding amenity"""
 
     amenity = get_object_or_404(models.Amenity, pk=pk)
@@ -227,7 +227,7 @@ def delete_amenity(request: HttpRequest, pk:int) -> HttpResponse:
 
 
 @login_required
-def delete_all_amenity(request: HttpRequest) -> HttpResponse:
+def delete_all_amenity(request):
     """ View for adding amenity"""
 
     if request.method == "POST":
@@ -251,16 +251,14 @@ def delete_all_amenity(request: HttpRequest) -> HttpResponse:
 
 
 
-def room_index(request: HttpRequest) -> HttpResponse:
-    """ A dummy view """
-
-    rooms = models.Room.objects.all()
+def room_index(request):
+    """ View for showing all available rooms"""
 
     context = {
-        'rooms': rooms,
+        'rooms': models.Room.objects.all(),
     }
 
-    return render(request, "app/room/room_index.html", context)
+    return render(request, "app/room/index.html", context)
 
 
 
@@ -271,7 +269,7 @@ def add_room(request):
     form = forms.RoomForm()
 
     if request.method == "POST":
-        form = forms.RoomForm(request.POST)
+        form = forms.RoomForm(request.POST, request.FILES)
 
         if form.is_valid():
             form.save()
@@ -342,7 +340,7 @@ def delete_all_room(request):
     """ View for adding rooms"""
 
     if request.method == "POST":
-        rooms = rooms.Room.objects.all()
+        rooms = models.Room.objects.all()
         n_rooms = len(rooms)
 
         for room in rooms:
@@ -351,6 +349,7 @@ def delete_all_room(request):
         msg = f"Rooms({n_rooms}) succesfully deleted."
         logger.debug(msg)
         messages.success(request, msg)
+        return redirect("room:index")
 
     context = {
         'title': "Delete all rooms",
@@ -362,7 +361,7 @@ def delete_all_room(request):
 
 
 
-def room(request, pk):
+def view_room(request, pk):
     """ View for adding rooms"""
     room = get_object_or_404(models.Room, pk=pk)
 
@@ -371,4 +370,4 @@ def room(request, pk):
         'room': room,
     }
 
-    return render(request, "app/room/room.html", context)
+    return render(request, "app/room/view.html", context)

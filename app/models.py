@@ -30,6 +30,9 @@ class Profile(models.Model):
 
     def __str__(self):
         return f"Profile({self.user.get_username()})"
+    
+    date_add = models.DateTimeField(auto_now_add=True)
+    date_update = models.DateTimeField(auto_now=True)
 
 
 class Amenity(models.Model):
@@ -42,6 +45,8 @@ class Amenity(models.Model):
     )
     name = models.CharField(max_length=100)
     fee = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    date_add = models.DateTimeField(auto_now_add=True)
+    date_update = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return f"{self.name}"
@@ -86,20 +91,22 @@ class Room(models.Model):
     description = models.TextField(
         validators = [
             RegexValidator(
-                r'^[a-zA-Z0-9_.\)\(\[\]\\\|\s]{4,}$',
+                r'^[a-zA-Z0-9_.\)\(\[\]\\\|\s]+$',
                 message = "Allowed characters: a-z, A-Z, 0-9, '_', '.', '\', '(', ')', '[', ']' and ' '."
             )
         ],
+        blank=True
     )
     type = models.CharField(choices=RoomTypes.choices)
     amenities = models.ManyToManyField(Amenity, blank=True, related_name="rooms")
     base_price = models.DecimalField(max_digits=10, decimal_places=2)
     capacity = models.IntegerField()
     is_available = models.BooleanField(default=True)
+    date_add = models.DateTimeField(auto_now_add=True)
+    date_update = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return f"Room({self.type}: {self.name})"
-
     
     @property
     def price(self) -> float:
@@ -110,6 +117,10 @@ class Room(models.Model):
                 total_price += amenity.fee
             return total_price
         return self.base_price
+    
+    @property
+    def get_room_display(self) -> str:
+        return f"Up to {self.capacity} people." if self.capacity > 1 else "Only for One (1) person."
 
 
 class Booking(models.Model):
@@ -124,11 +135,11 @@ class Booking(models.Model):
         auto_created=True,
         default=uuid4,
     )
-    check_in = models.DateTimeField()  # Start date
-    check_out = models.DateTimeField()  # End date
+    date_checkin = models.DateTimeField()  # Start date
+    date_checkout = models.DateTimeField()  # End date
 
-    booked_at = models.DateTimeField(auto_now_add=True) 
-    book_until = models.DateTimeField()
+    date_bookat = models.DateTimeField(auto_now_add=True) 
+    date_bookuntil = models.DateTimeField()
 
     paid_price = models.DecimalField(max_digits=10, decimal_places=2)  # Final price after discounts
     discount = models.DecimalField(max_digits=5, decimal_places=2, default=0)  # e.g., 10.50%
