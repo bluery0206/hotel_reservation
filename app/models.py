@@ -29,9 +29,7 @@ class Profile(models.Model):
 class Amenity(models.Model):
     """ Amenities """
     name = models.CharField(max_length=100)
-
-    # def __str__(self):
-    #     return f"Amenity({self.name})"
+    fee = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
 
     def __str__(self):
         return f"{self.name}"
@@ -79,6 +77,7 @@ class Room(models.Model):
     amenities = models.ManyToManyField(Amenity, blank=True)
     base_price = models.DecimalField(max_digits=10, decimal_places=2)
     capacity = models.IntegerField()
+    is_available = models.BooleanField(default=True)
 
     def __str__(self):
         return f"Room({self.type}: {self.name})"
