@@ -1,0 +1,45 @@
+{% extends 'app/base/base_dialog.html' %}
+{% load static %}
+{% load widget_tweaks %}
+
+{% block form %}
+    <div class="mb-3">
+        <label for="{{ form.name.id_for_label }}" class="form-label">{{ form.name.label}}</label>
+        
+        {% if form.name.errors or form.errors %}
+            {{ form.name|add_class:"is-invalid" }}
+        {% elif not form.name.errors and request.method == "POST" %}
+            {{ form.name|add_class:"is-valid"}}
+        {% else %}
+            {{ form.name }}
+        {% endif %}
+
+        {% if form.name.errors %}
+            {% for error in form.name.errors %}
+                <div class="invalid-feedback">
+                    {{ error }}
+                </div>
+            {% endfor %}
+        {% endif %}
+    </div>
+    
+    <div class="mb-3">
+        <label for="{{ form.fee.id_for_label }}" class="form-label">{{ form.fee.label}}</label>
+        
+        {% if form.fee.errors or form.errors %}
+            {{ form.fee|add_class:"is-invalid" }}
+        {% elif not form.fee.errors and request.method == "POST" %}
+            {{ form.fee|add_class:"is-valid"}}
+        {% else %}
+            {{ form.fee }}
+        {% endif %}
+
+        {% if form.fee.errors %}
+            {% for error in form.fee.errors %}
+                <div class="invalid-feedback">
+                    {{ error }}
+                </div>
+            {% endfor %}
+        {% endif %}
+    </div>
+{% endblock%}

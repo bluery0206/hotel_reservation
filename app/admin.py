@@ -1,15 +1,10 @@
 from django.contrib import admin
 
-from .models import (
-    Profile,
-    Booking,
-    Amenity,
-    Room,
-)
+from . import models
 
 admin.site.register([
-    Profile,
-    Booking,
-    Amenity,
-    Room,
+    models.Profile,
+    models.Amenity,
+    models.Room,
+    models.Reservation,
 ])

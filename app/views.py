@@ -21,7 +21,6 @@ logger = logging.getLogger(__name__)
 
 
 
-@login_required
 def index(request):
     """ Shows the index/home/dashboard page """
 
@@ -294,7 +293,7 @@ def room_add(request):
         'button_message': "Confirm",
     }
 
-    return render(request, "app/room/room_form.html", context)
+    return render(request, "app/room/form.html", context)
 
 
 
@@ -320,7 +319,7 @@ def room_update(request, pk):
         'button_message': "Confirm",
     }
 
-    return render(request, "app/room/room_form.html", context)
+    return render(request, "app/room/form.html", context)
 
 
 
@@ -373,6 +372,157 @@ def room_delete_all(request):
 
 
 def room_view(request, pk):
+    """ View for adding rooms"""
+    room = get_object_or_404(models.Room, pk=pk)
+
+    context = {
+        'title': room.name,
+        'room': room,
+    }
+
+    return render(request, "app/room/view.html", context)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+def reservation_index(request):
+    """ View for showing all available rooms"""
+
+    reservation = models.Reservation.objects.all()
+
+    context = {
+        'reservation': reservation,
+    }
+
+    return render(request, "app/reservation/index.html", context)
+
+
+
+@login_required
+def reservation_add(request):
+    """ View for adding reservations"""
+
+    form = forms.RoomForm()
+
+    if request.method == "POST":
+        form = forms.RoomForm(request.POST)
+
+        if form.is_valid():
+            form.save()
+            msg = f"{form.instance} succesfully added."
+            logger.debug(msg)
+            messages.success(request, msg)
+
+    context = {
+        'form': form,
+        'title': "Add Room",
+        'button_message': "Confirm",
+    }
+
+    return render(request, "app/room/form.html", context)
+
+
+
+@login_required
+def reservation_update(request, pk):
+    """ View for adding rooms"""
+
+    room = get_object_or_404(models.Room, pk=pk)
+    form = forms.RoomForm(instance=room)
+
+    if request.method == "POST":
+        form = forms.RoomForm(request.POST, request.FILES, instance=room)
+
+        if form.is_valid():
+            form.save()
+            msg = f"{form.instance} succesfully updated."
+            logger.debug(msg)
+            messages.success(request, msg)
+
+    context = {
+        'form': form,
+        'title': "Update Room",
+        'button_message': "Confirm",
+    }
+
+    return render(request, "app/room/form.html", context)
+
+
+
+@login_required
+def reservation_delete(request, pk):
+    """ View for adding rooms"""
+
+    room = get_object_or_404(models.Room, pk=pk)
+
+    if request.method == "POST":
+        room.delete()
+        msg = f"{room} succesfully deleted."
+        logger.debug(msg)
+        messages.success(request, msg)
+
+    context = {
+        'title': f"Delete Room({room.name})",
+        'description': f"Deleting Room({room.name}) can't be undone.",
+        'button_message': "Confirm delete",
+    }
+
+    return render(request, "app/base/base_dialog.html", context)
+
+
+
+@login_required
+def reservation_delete_all(request):
+    """ View for adding rooms"""
+
+    if request.method == "POST":
+        rooms = models.Room.objects.all()
+        n_rooms = len(rooms)
+
+        for room in rooms:
+            room.delete()
+
+        msg = f"Rooms({n_rooms}) succesfully deleted."
+        logger.debug(msg)
+        messages.success(request, msg)
+        return redirect("room:index")
+
+    context = {
+        'title': "Delete all rooms",
+        'description': "Deleting rooms can't be undone.",
+        'button_message': "Confirm delete",
+    }
+
+    return render(request, "app/base/base_dialog.html", context)
+
+
+
+def reservation_view(request, pk):
     """ View for adding rooms"""
     room = get_object_or_404(models.Room, pk=pk)
 

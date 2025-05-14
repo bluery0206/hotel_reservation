@@ -273,3 +273,23 @@ class RoomForm(forms.ModelForm):
             )
         }
 
+
+
+
+# class ReservationForm(forms.ModelForm):
+#     class Meta:
+#         # save it to the model
+#         # Whenever this forms validates, this is going to create a new User
+#         model = Room
+
+#         # fields are going to be shown on our form and in what order
+#         fields = [
+#             'date_bookuntil',
+#         ]
+#         widgets = {
+#             'date_bookuntil': forms.DateField(attrs={
+#                     'class' : 'form-control',
+#                 }
+#             ),
+#         }
+

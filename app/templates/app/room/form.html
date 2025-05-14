@@ -155,14 +155,14 @@
                     </div>
                     <div class="col">
                         <div class="mb-3">
-                            <div class="row justify-content-between">
+                            <div class="row justify-content-between mb-2 align-items-center">
                                 <div class="fs-6 col-auto">Amenities</div>
                                 <div class="col-auto">
                                     <a href="{% url 'amenity:add' %}" class="btn btn-sm btn-secondary">Add amenity</a>
                                     <a href="{% url 'amenity:index' %}" class="btn btn-sm btn-secondary">Amenities</a>
                                 </div>
                             </div>
-                            <div class="row">
+                            <div class="row py-2 gx-2 gy-2">
                                 {% for amenity in form.amenities %}
                                     <div class="col-auto">
                                         {{ amenity }}

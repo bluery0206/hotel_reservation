@@ -73,7 +73,7 @@
                             </h5>
                             <div class="card-text">
                                 <span class="fw-bol">Capacity:</span>
-                                <span>{{ room.get_room_display }}</span>
+                                <span>{{ room.get_capacity_display }}</span>
                             </div>
                             {% comment %}
                                 |floatformat:"2g"
@@ -94,13 +94,18 @@
                                     </div>
                                 </div>
                             {% endif %}
-                            <p class="card-text fs-6 m-0 d-flex align-items-center">
-                                <strong class="text-success-emphasis me-2">Price: {{ room.get_price_display }}</strong>
-                            </p>
-
-                            <a href="#" class="btn btn-success btn-lg w-100">
-                                Reserve
-                            </a>
+                            <div class="row align-items-center">
+                                <div class="col">
+                                    <p class="card-text fs-6 m-0 d-flex align-items-center">
+                                        <strong class="text-success-emphasis me-2">Price: {{ room.get_price_display }}</strong>
+                                    </p>
+                                </div>
+                                <div class="col">
+                                    <a href="#" class="btn btn-success btn-lg w-100">
+                                        Reserve
+                                    </a>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>

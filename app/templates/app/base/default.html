@@ -49,7 +49,7 @@
                         <div class="col-auto">
                             <a href="{% url 'room:index' %}" class="btn me-2">Rooms</a>
                         </div>
-                        {% if not user.is_superuser %}
+                        {% if not user.is_superuser and user.is_authenticated %}
                             <div class="col-auto">
                                 <div class="btn me-2">Reservations</div>
                             </div>

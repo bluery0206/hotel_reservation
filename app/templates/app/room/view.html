@@ -10,32 +10,47 @@
                         {{ room.name }}
                     </h2>
                     <hr>
-                    <h5 class="text-body-secondary">
+                    <h5 class="">
                         {{ room.get_type_display }}
                     </h5>
                     <p class="fst-italic text-body-secondary">
                         {{ room.description }}
                     </p>
-                    {% if room.amenities.all %}
-                        <div class="mb-1">
-                            <i class="fa-solid fa-circle-plus"></i>
+                    <div class="mb-2">
+                        <span class="fw-bol">Capacity:</span>
+                        <span>{{ room.get_capacity_display }}</span>
+                    </div>
+                    <div>
+                        <div class="mb-2">
                             Amenities:
                         </div>
-                        <div class="row gx-2">
+                        <div class="row g-2 mb-2">
                             {% for amenity in room.amenities.all %}
                                 <div class="col-auto">
                                     <div class="border border-secondary rounded py-1 px-2">
                                         {{ amenity.name }}
                                     </div>
                                 </div>
+                            {% empty %}
+                                <div class="col-auto">
+                                    <div class="border border-secondary rounded py-1 px-2">
+                                        No amenities added
+                                    </div>
+                                </div>
                             {% endfor %}
                         </div>
-                    {% endif %}
-                    <div>
-                        {{ room.price }}
                     </div>
-                    <div>
-                        {{ room.capacity }}
+                    <div class="row g-2 align-items-center">
+                        <div class="col">
+                            <p class="card-text fs-6 m-0 d-flex align-items-center">
+                                <strong class="text-success-emphasis me-2">Price: {{ room.get_price_display }}</strong>
+                            </p>
+                        </div>
+                        <div class="col">
+                            <a href="#" class="btn btn-success btn-lg w-100">
+                                Reserve
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>

@@ -53,7 +53,7 @@ class Amenity(models.Model):
     
     @property  
     def get_fee_display(self):
-        return f"{self.fee:,.2f}" if self.fee > 0 else "Free"
+        return f"₱{self.fee:,.2f}" if self.fee > 0 else "Free"
 
     class Meta:
         """ Metadata """
@@ -68,7 +68,7 @@ class Room(models.Model):
 
         STANDARD = "ST", "Standard"
         DELUXE = "DL", "Deluxe"
-        SUITE = "SU", "Suit"
+        SUITE = "SU", "Suite"
 
     uuid = models.UUIDField(
         primary_key=True,
@@ -124,15 +124,19 @@ class Room(models.Model):
     
     @property
     def get_price_display(self):
-        return f"{self.price:,.2f}" if self.price > 0 else "Free"
+        return f"₱{self.price:,.2f}" if self.price > 0 else "Free"
+    
+    @property
+    def get_base_price_display(self):
+        return f"₱{self.base_price:,.2f}" if self.price > 0 else "Free"
 
     @property
-    def get_room_display(self) -> str:
-        return f"Up to {self.capacity:,} people." if self.capacity > 1 else "Only for One (1) person."
+    def get_capacity_display(self) -> str:
+        return f"1 to {self.capacity:,} people" if self.capacity > 1 else f"{self.capacity:,} person"
 
 
-class Booking(models.Model):
-    """ Booking """
+class Reservation(models.Model):
+    """ Reservation """
     # Delete THIS instance of User or Room is deleted
     user = models.ForeignKey(User, on_delete=models.CASCADE) 
     room = models.ForeignKey(Room, on_delete=models.CASCADE)
@@ -143,11 +147,13 @@ class Booking(models.Model):
         auto_created=True,
         default=uuid4,
     )
-    date_checkin = models.DateTimeField()  # Start date
-    date_checkout = models.DateTimeField()  # End date
 
-    date_bookat = models.DateTimeField(auto_now_add=True) 
-    date_bookuntil = models.DateTimeField()
+    date_checkin = models.DateField(blank=True)  # Start date
+    date_checkout = models.DateField(blank=True)  # End date
+
+    date_bookat = models.DateField(auto_now_add=True) 
+    date_bookfrom = models.DateField()  
+    date_bookuntil = models.DateField()
 
     paid_price = models.DecimalField(max_digits=10, decimal_places=2)  # Final price after discounts
     discount = models.DecimalField(max_digits=5, decimal_places=2, default=0)  # e.g., 10.50%

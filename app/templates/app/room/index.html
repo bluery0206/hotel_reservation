@@ -5,74 +5,94 @@
     <div class="container pt-lg-4 pt-2">
         <div class="row justify-content-center">
             <div>
-                <div class="row">
+                <div class="row py-0 align-items-center">
                     <div class="col">
-                        <h4>
-                            Rooms
-                        </h4>
+                        <h4 class="p-0 m-0">Rooms</h4>
                     </div>
-                    <div class="col-auto">
-                        <div class="row">
-                            <div class="col-auto">
-                                <a href="{% url 'room:add' %}" class="btn btn-success">Add Room</a>
-                            </div>
-                            <div class="col-auto">
-                                <a href="{% url 'room:delete_all' %}" class="btn btn-danger">Delete All</a>
+                    {% if user.is_superuser %}
+                        <div class="col-auto">
+                            <div class="row gx-1">
+                                <div class="col-auto">
+                                    <a href="{% url 'room:add' %}" class="btn btn-success">Add Room</a>
+                                </div>
+                                <div class="col-auto">
+                                    <a href="{% url 'room:delete_all' %}" class="btn btn-danger">Delete All</a>
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    {% endif %}
                 </div>
-                <table class="table caption-top table-hover table-responsive">
-                    <caption>List of rooms</caption>
-                    <thead class="table-secondary">
-                        <tr>
-                            <th scope="col">#</th>
-                            <th scope="col">Name</th>
-                            <th scope="col">Type</th>
-                            <th scope="col">Amenities</th>
-                            <th scope="col">Base Price</th>
-                            <th scope="col">Capacity</th>
-                            <th scope="col" class="text-center">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for room in rooms %}
+                <hr>
+                <div class="table-responsive">
+
+                    <table class="table caption-top table-hover">
+                        <caption class="visually-hidden">List of rooms</caption>
+                        <thead class="table-secondary">
                             <tr>
-                                <th scope="row">{{ forloop.counter }}</th>
-                                <td>{{ room.name }}</td>
-                                <td>
-                                    {% for TYPE in room.RoomTypes %}
-                                        {% if room.type == TYPE %}
-                                            {{ TYPE.label }}
-                                        {% endif %}
-                                    {% endfor %}
-                                </td>
-                                <td>
-                                    {% for amenity in room.amenities.all %}
-                                        <span>
-                                            {{ amenity.name }}{% if forloop.counter != room.amenities.all.count %}, {% endif %}
-                                        </span>
-                                    {% endfor %}
-                                </td>
-                                <td>{{ room.base_price }}</td>
-                                <td>{{ room.capacity }}</td>
-                                <td>
-                                    <div class="row justify-content-center">
-                                        <div class="col-auto">
-                                            <a href="{% url 'room:view' room.pk %}" class="btn btn-success" href="">View</a> 
-                                        </div>
-                                        <div class="col-auto">
-                                            <a href="{% url 'room:update' room.pk %}" class="btn btn-success" href="">Update</a> 
-                                        </div>
-                                        <div class="col-auto">
-                                            <a href="{% url 'room:delete' room.pk %}" class="btn btn-danger" href="">Delete</a>
-                                        </div>
-                                    </div>
-                                </td>
+                                <th scope="col"></th>
+                                <th scope="col">Name</th>
+                                <th scope="col">Type</th>
+                                <th scope="col">Amenities</th>
+                                <th scope="col" class="text-nowrap">Base Price</th>
+                                <th scope="col">Price</th>
+                                <th scope="col">Capacity</th>
+                                <th scope="col" class="text-center specific-w-150">Actions</th>
                             </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            {% for room in rooms %}
+                                <tr>
+                                    <th scope="row">
+                                        {% if room.image %}
+                                            <img src="{{ room.image.url }}" alt="{{ room.name }}" class=" object-fit-cover" height="75" width="100">
+                                        {% else %}
+                                            <img src="{% static 'app/images/room.png' %}" alt="{{ room.name }}" class=" object-fit-cover" height="75" width="100">
+                                        {% endif %}
+                                    </th>
+                                    <td>
+                                        <a href="{% url 'room:view' room.pk %}">
+                                            {{ room.name }}
+                                        </a>
+                                    </td>
+                                    <td>
+                                        {{ room.get_type_display }}
+                                    </td>
+                                    <td>
+                                        {% for amenity in room.amenities.all %}
+                                            <span>
+                                                <!-- Adds a comma if current amenity is not the last in the list -->
+                                                {{ amenity.name }}{% if not forloop.last %}, {% endif %}
+                                            </span>
+                                        {% empty %}
+                                            <span>
+                                                No amenities added
+                                            </span>
+                                        {% endfor %}
+                                    </td>
+                                    <td class="text-nowrap">{{ room.get_base_price_display }}</td>
+                                    <td class="text-nowrap">{{ room.get_price_display }}</td>
+                                    <td>{{ room.get_capacity_display }}</td>
+                                    <td>
+                                        {% if user.is_superuser %}
+                                            <div class="row justify-content-center gx-2 gy-2">
+                                                <div class="col-auto">
+                                                    <a href="{% url 'room:update' room.pk %}" class="btn btn-success" href="">Update</a> 
+                                                </div>
+                                                <div class="col-auto">
+                                                    <a href="{% url 'room:delete' room.pk %}" class="btn btn-danger" href="">Delete</a>
+                                                </div>
+                                            </div>
+                                        {% else %}
+                                            <a href="#" class="btn btn-success btn-lg w-100">
+                                                Reserve
+                                            </a>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
