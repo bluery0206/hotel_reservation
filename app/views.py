@@ -258,8 +258,15 @@ def delete_all_amenity(request):
 def room_index(request):
     """ View for showing all available rooms"""
 
+    if request.user.is_superuser:   
+        # If the user is a superuser, show all rooms
+        rooms = models.Room.objects.all()
+    else:
+        # If the user is not a superuser, show only available rooms
+        rooms = models.Room.objects.filter(is_available=True)
+
     context = {
-        'rooms': models.Room.objects.all(),
+        'rooms': rooms,
     }
 
     return render(request, "app/room/index.html", context)
@@ -267,7 +274,7 @@ def room_index(request):
 
 
 @login_required
-def add_room(request):
+def room_add(request):
     """ View for adding rooms"""
 
     form = forms.RoomForm()
@@ -292,7 +299,7 @@ def add_room(request):
 
 
 @login_required
-def update_room(request, pk):
+def room_update(request, pk):
     """ View for adding rooms"""
 
     room = get_object_or_404(models.Room, pk=pk)
@@ -318,7 +325,7 @@ def update_room(request, pk):
 
 
 @login_required
-def delete_room(request, pk):
+def room_delete(request, pk):
     """ View for adding rooms"""
 
     room = get_object_or_404(models.Room, pk=pk)
@@ -340,7 +347,7 @@ def delete_room(request, pk):
 
 
 @login_required
-def delete_all_room(request):
+def room_delete_all(request):
     """ View for adding rooms"""
 
     if request.method == "POST":
@@ -365,7 +372,7 @@ def delete_all_room(request):
 
 
 
-def view_room(request, pk):
+def room_view(request, pk):
     """ View for adding rooms"""
     room = get_object_or_404(models.Room, pk=pk)
 

@@ -119,8 +119,12 @@ class Room(models.Model):
         return self.base_price
     
     @property
+    def get_price_display(self):
+        return f"{self.price:,.2f}" if self.price > 0 else "Free"
+
+    @property
     def get_room_display(self) -> str:
-        return f"Up to {self.capacity} people." if self.capacity > 1 else "Only for One (1) person."
+        return f"Up to {self.capacity:,} people." if self.capacity > 1 else "Only for One (1) person."
 
 
 class Booking(models.Model):
