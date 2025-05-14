@@ -41,7 +41,7 @@
                             <a href="{% url 'app-index' %}" class="btn me-2">Home</a>
                         </div>
 
-                        {% if user.is_staff %}
+                        {% if user.is_superuser %}
                             <div class="col-auto">
                                 <a href="{% url 'amenity:index' %}" class="btn me-2">Amenities</a>
                             </div>
@@ -50,9 +50,11 @@
                             </div>
                         {% endif %}
 
-                        <div class="col-auto">
-                            <div class="btn me-2">Reservations</div>
-                        </div>
+                        {% if not user.is_superuser %}
+                            <div class="col-auto">
+                                <div class="btn me-2">Reservations</div>
+                            </div>
+                        {% endif %}
 
                         {% if user.is_authenticated %}
                             <div class="col-auto">

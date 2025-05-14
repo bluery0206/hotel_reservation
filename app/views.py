@@ -25,8 +25,16 @@ logger = logging.getLogger(__name__)
 def index(request):
     """ Shows the index/home/dashboard page """
 
+
+    if request.user.is_superuser:   
+        # If the user is a superuser, show all rooms
+        rooms = models.Room.objects.all().order_by('-date_update')[:12]
+    else:
+        # If the user is not a superuser, show only available rooms
+        rooms = models.Room.objects.filter(is_available=True).order_by('-date_update')[:12]
+
     context = {
-        "rooms": models.Room.objects.all().order_by('-date_update')[:12],
+        "rooms": rooms,
     }
 
     return render(request, "app/index.html", context)
@@ -68,10 +76,6 @@ def signup(request):
     """ User Register View """
 
     form = forms.SignUpForm()
-
-    # Decodes URL string back into a clickable URL
-    # Example:
-    #   https%3A%2F%2Fexample.com -> https://example.com
     prev = unquote(request.GET.get("prev", ""))
     next = unquote(request.GET.get("next", ""))
 
@@ -108,7 +112,7 @@ def signout(request):
 
 
 @login_required
-def profile(request, pk:int):
+def profile(request, pk):
     """ Shows the user profile """
 
     p = get_object_or_404(models.Profile, pk=pk)
