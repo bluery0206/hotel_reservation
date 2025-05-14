@@ -50,6 +50,10 @@ class Amenity(models.Model):
 
     def __str__(self):
         return f"{self.name}"
+    
+    @property  
+    def get_fee_display(self):
+        return f"{self.fee:,.2f}" if self.fee > 0 else "Free"
 
     class Meta:
         """ Metadata """

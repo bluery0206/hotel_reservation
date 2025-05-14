@@ -151,12 +151,12 @@ def amenity_index(request):
         'amenities': amenities,
     }
 
-    return render(request, "app/amenity/amenity_index.html", context)
+    return render(request, "app/amenity/index.html", context)
 
 
 
 @login_required
-def add_amenity(request):
+def amenity_add(request):
     """ View for adding amenity"""
 
     form = forms.AmenityForm()
@@ -176,12 +176,12 @@ def add_amenity(request):
         'button_message': "Confirm",
     }
 
-    return render(request, "app/amenity/amenity_form.html", context)
+    return render(request, "app/amenity/form.html", context)
 
 
 
 @login_required
-def update_amenity(request, pk:int):
+def amenity_update(request, pk:int):
     """ View for adding amenity"""
 
     amenity = get_object_or_404(models.Amenity, pk=pk)
@@ -202,12 +202,12 @@ def update_amenity(request, pk:int):
         'button_message': "Confirm changes",
     }
 
-    return render(request, "app/amenity/amenity_form.html", context)
+    return render(request, "app/amenity/form.html", context)
 
 
 
 @login_required
-def delete_amenity(request, pk:int):
+def amenity_delete(request, pk:int):
     """ View for adding amenity"""
 
     amenity = get_object_or_404(models.Amenity, pk=pk)
@@ -231,7 +231,7 @@ def delete_amenity(request, pk:int):
 
 
 @login_required
-def delete_all_amenity(request):
+def amenity_delete_all(request):
     """ View for adding amenity"""
 
     if request.method == "POST":

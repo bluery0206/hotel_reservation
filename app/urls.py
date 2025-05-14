@@ -56,10 +56,10 @@ profile_patterns = [
 
 amenity_patterns = [
 	path("all/", views.amenity_index, name="index"),
-	path("add/", views.add_amenity, name="add"),
-	path("update/<uuid:pk>/", views.update_amenity, name="update"),
-	path("delete/<uuid:pk>/", views.delete_amenity, name="delete"),
-	path("delete/all", views.delete_all_amenity, name="delete_all"),
+	path("add/", views.amenity_add, name="add"),
+	path("update/<uuid:pk>/", views.amenity_update, name="update"),
+	path("delete/<uuid:pk>/", views.amenity_delete, name="delete"),
+	path("delete/all", views.amenity_delete_all, name="delete_all"),
 ]
 
 room_patterns = [
