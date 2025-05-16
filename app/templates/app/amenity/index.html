@@ -12,10 +12,10 @@
                     <div class="col-auto">
                         <div class="row gx-1">
                             <div class="col-auto">
-                                <a href="{% url 'amenity:add' %}" class="btn btn-success">Add Amenity</a>
+                                <a href="{% url 'amenity:add' %}?next={{ current_url|urlencode }}" class="btn btn-success">Add new amenity</a>
                             </div>
                             <div class="col-auto">
-                                <a href="{% url 'amenity:delete_all' %}" class="btn btn-danger">Delete All</a>
+                                <a href="{% url 'amenity:delete_all' %}?next={{ current_url|urlencode }}" class="btn btn-danger">Delete all amenities</a>
                             </div>
                         </div>
                     </div>
@@ -25,7 +25,6 @@
                     <caption class="visually-hidden">List of amenities</caption>
                     <thead class="table-secondary">
                         <tr>
-                            <th scope="col">#</th>
                             <th scope="col">Name</th>
                             <th scope="col">Fee</th>
                             <th scope="col" class="specific-w-150 text-center">Actions</th>
@@ -34,16 +33,15 @@
                     <tbody>
                         {% for amenity in amenities %}
                             <tr>
-                                <th scope="row">{{ forloop.counter }}</th>
                                 <td>{{ amenity.name }}</td>
                                 <td>{{ amenity.get_fee_display }}</td>
                                 <td>
                                     <div class="row gx-2 gy-2 p-0 justify-content-center">
                                         <div class="col-auto">
-                                            <a class="btn btn-sm m-0 btn-success" href="{% url 'amenity:update' amenity.pk %}">Update</a> 
+                                            <a class="btn btn-sm m-0 btn-success" href="{% url 'amenity:update' amenity.pk %}?next={{ current_url|urlencode }}">Update</a> 
                                         </div>
                                         <div class="col-auto">
-                                            <a class="btn btn-sm m-0 btn-danger" href="{% url 'amenity:delete' amenity.pk %}">Delete</a>
+                                            <a class="btn btn-sm m-0 btn-danger" href="{% url 'amenity:delete' amenity.pk %}?next={{ current_url|urlencode }}">Delete</a>
                                         </div>
                                     </div>
                                 </td>
