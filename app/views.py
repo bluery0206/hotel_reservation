@@ -7,6 +7,7 @@ from django.contrib.auth.decorators import login_required
 from urllib.parse import unquote # For decoding encoded urls (e.g. https%3A%2F%2Fexample.com -> https://example.com)
 # from django.contrib.auth.tokens import default_token_generator
 # from django.utils.http import urlsafe_base64_decode
+from django.utils import timezone
 
 # from pathlib import Path
 # from uuid import uuid4
@@ -24,13 +25,8 @@ logger = logging.getLogger(__name__)
 def index(request):
     """ Shows the index/home/dashboard page """
 
-
-    if request.user.is_superuser:   
-        # If the user is a superuser, show all rooms
-        rooms = models.Room.objects.all().order_by('-date_update')[:12]
-    else:
-        # If the user is not a superuser, show only available rooms
-        rooms = models.Room.objects.filter(is_available=True).order_by('-date_update')[:12]
+    rooms = models.Room.objects.all().order_by('-date_update')[:12]
+    rooms = [[room, room.reservations.filter(date_checkout__isnull=True)] for room in rooms]
 
     context = {
         "rooms": rooms,
@@ -111,7 +107,7 @@ def signout(request):
 
 
 @login_required
-def profile(request, pk):
+def profile_view(request, pk):
     """ Shows the user profile """
 
     p = get_object_or_404(models.Profile, pk=pk)
@@ -130,14 +126,43 @@ def profile(request, pk):
             logger.debug(msg)
 
     context = {
-        'prev': request.GET.get("prev", ""),
-        'next': request.GET.get("next", ""),
         'profile': p,
         'p_form': p_form,
         'u_form': u_form,
+        'current_url': request.build_absolute_uri(),
     }
 
-    return render(request, "app/profile/profile.html", context)
+    return render(request, "app/profile/view.html", context)
+
+
+
+@login_required
+def profile_delete(request, pk):
+    """ Shows the user profile """
+
+    profile = get_object_or_404(models.Profile, pk=pk)
+    name = profile.user.get_full_name() if profile.user.get_full_name() else profile.user.username
+
+    if request.method == "POST":
+        profile.user.delete()
+        profile.delete()
+        logout(request)
+        msg = f"Profile({name}) succesfully deleted."
+        logger.debug(msg)
+        messages.success(request, msg)
+        redirect("app-index")
+
+    context = {
+        'title': f"Delete Profile: {name}",
+        'description': f"Deleting Profile ({name}) can't be undone. This action also deletes your user account and so you'll have to register once again in order to sign in.",
+        'button_message': "Confirm delete",
+    }
+
+    return render(request, "app/base/base_dialog.html", context)
+
+
+
+# AMENITY VIEWS
 
 
 
@@ -148,6 +173,7 @@ def amenity_index(request):
 
     context = {
         'amenities': amenities,
+        "current_url": request.build_absolute_uri(),
     }
 
     return render(request, "app/amenity/index.html", context)
@@ -159,19 +185,21 @@ def amenity_add(request):
     """ View for adding amenity"""
 
     form = forms.AmenityForm()
+    next = unquote(request.GET.get("next", ""))
 
     if request.method == "POST":
         form = forms.AmenityForm(request.POST)
 
         if form.is_valid():
             form.save()
-            msg = f"Amenity({form.instance.name}) succesfully added."
+            msg = f"New amenity {form.instance.name} has been succesfully added."
             logger.debug(msg)
             messages.success(request, msg)
+            return redirect(next if next else "amenity:index")
 
     context = {
         'form': form,
-        'title': "Add Amenity",
+        'title': "Add new amenity",
         'button_message': "Confirm",
     }
 
@@ -185,19 +213,21 @@ def amenity_update(request, pk:int):
 
     amenity = get_object_or_404(models.Amenity, pk=pk)
     form = forms.AmenityForm(instance=amenity)
+    next = unquote(request.GET.get("next", ""))
 
     if request.method == "POST":
         form = forms.AmenityForm(request.POST, instance=amenity)
 
         if form.is_valid():
             form.save()
-            msg = f"Amenity({form.instance.name}) succesfully updated."
+            msg = f"Amenity: {form.instance.name}, was succesfully updated."
             logger.debug(msg)
             messages.success(request, msg)
+            return redirect(next if next else "amenity:index")
 
     context = {
         'form': form,
-        'title': f"Update Amenity({amenity.name})",
+        'title': f"Update Amenity: {amenity.name}",
         'button_message': "Confirm changes",
     }
 
@@ -210,18 +240,20 @@ def amenity_delete(request, pk:int):
     """ View for adding amenity"""
 
     amenity = get_object_or_404(models.Amenity, pk=pk)
+    next = unquote(request.GET.get("next", ""))
 
     if request.method == "POST":
         name = amenity.name
         amenity.delete()
-        msg = f"Amenity({name}) succesfully deleted."
+        msg = f"Amenity: {name}, succesfully deleted."
         logger.debug(msg)
         messages.success(request, msg)
+        return redirect(next if next else "amenity:index")
 
     context = {
         'amenity': amenity,
-        'title': f"Delete Amenity({amenity.name})",
-        'description': f"Deleting Amenity({amenity.name}) can't be undone.",
+        'title': f"Delete Amenity: {amenity.name}",
+        'description': f"Deleting Amenity: {amenity.name} can't be undone. This action will also reduce the price of the rooms associated with this amenity.",
         'button_message': "Confirm delete",
     }
 
@@ -233,6 +265,8 @@ def amenity_delete(request, pk:int):
 def amenity_delete_all(request):
     """ View for adding amenity"""
 
+    next = unquote(request.GET.get("next", ""))
+
     if request.method == "POST":
         amenities = models.Amenity.objects.all()
         n_amenities = len(amenities)
@@ -240,13 +274,14 @@ def amenity_delete_all(request):
         for amenity in amenities:
             amenity.delete()
 
-        msg = f"Amenity ({n_amenities}) succesfully deleted."
+        msg = f"All {n_amenities} amenities succesfully deleted."
         logger.debug(msg)
         messages.success(request, msg)
+        return redirect(next if next else "amenity:index")
 
     context = {
-        'title': "Delete all amenity",
-        'description': "Deleting Amenities can't be undone.",
+        'title': "Delete all amenities",
+        'description': "Deleting Amenities can't be undone. This action will also reduce the price of the rooms associated with this amenity.",
         'button_message': "Confirm delete",
     }
 
@@ -254,18 +289,25 @@ def amenity_delete_all(request):
 
 
 
+# ROOM VIEWS
+
+
+
 def room_index(request):
     """ View for showing all available rooms"""
 
-    if request.user.is_superuser:   
-        # If the user is a superuser, show all rooms
-        rooms = models.Room.objects.all()
-    else:
-        # If the user is not a superuser, show only available rooms
-        rooms = models.Room.objects.filter(is_available=True)
-
+    # if request.user.is_superuser:   
+    #     # If the user is a superuser, show all rooms
+    #     rooms = models.Room.objects.all()
+    # else:
+    #     # If the user is not a superuser, show only available rooms
+    #     rooms = models.Room.objects.filter(is_available=True)
+    
+    rooms = models.Room.objects.filter()
+    rooms = [[room, room.reservations.filter(date_checkout__isnull=True)] for room in rooms]
     context = {
         'rooms': rooms,
+        'current_url': request.build_absolute_uri(),
     }
 
     return render(request, "app/room/index.html", context)
@@ -277,15 +319,17 @@ def room_add(request):
     """ View for adding rooms"""
 
     form = forms.RoomForm()
+    next = unquote(request.GET.get("next", ""))
 
     if request.method == "POST":
         form = forms.RoomForm(request.POST, request.FILES)
 
         if form.is_valid():
             form.save()
-            msg = f"{form.instance} succesfully added."
+            msg = f"New room, {form.instance}, succesfully added."
             logger.debug(msg)
             messages.success(request, msg)
+        return redirect(next if next else "room:index")
 
     context = {
         'form': form,
@@ -303,15 +347,17 @@ def room_update(request, pk):
 
     room = get_object_or_404(models.Room, pk=pk)
     form = forms.RoomForm(instance=room)
+    next = unquote(request.GET.get("next", ""))
 
     if request.method == "POST":
         form = forms.RoomForm(request.POST, request.FILES, instance=room)
 
         if form.is_valid():
             form.save()
-            msg = f"{form.instance} succesfully updated."
+            msg = f"Room {form.instance.name} was succesfully updated."
             logger.debug(msg)
             messages.success(request, msg)
+        return redirect(next if next else "room:index")
 
     context = {
         'form': form,
@@ -328,16 +374,18 @@ def room_delete(request, pk):
     """ View for adding rooms"""
 
     room = get_object_or_404(models.Room, pk=pk)
+    next = unquote(request.GET.get("next", ""))
 
     if request.method == "POST":
         room.delete()
-        msg = f"{room} succesfully deleted."
+        msg = f"Room {room.name} was succesfully deleted."
         logger.debug(msg)
         messages.success(request, msg)
+        return redirect(next if next else "room:index")
 
     context = {
-        'title': f"Delete Room({room.name})",
-        'description': f"Deleting Room({room.name}) can't be undone.",
+        'title': f"Delete Room: {room.name}",
+        'description': f"Deleting Room: {room.name} can't be undone. All reservations on this room will also be deleted.",
         'button_message': "Confirm delete",
     }
 
@@ -349,21 +397,22 @@ def room_delete(request, pk):
 def room_delete_all(request):
     """ View for adding rooms"""
 
-    if request.method == "POST":
-        rooms = models.Room.objects.all()
-        n_rooms = len(rooms)
+    next = unquote(request.GET.get("next", ""))
+    rooms = models.Room.objects.all()
+    n_rooms = len(rooms)
 
+    if request.method == "POST":
         for room in rooms:
             room.delete()
 
-        msg = f"Rooms({n_rooms}) succesfully deleted."
+        msg = f"All {n_rooms} room succesfully deleted."
         logger.debug(msg)
         messages.success(request, msg)
-        return redirect("room:index")
+        return redirect(next if next else "amenity:index")
 
     context = {
-        'title': "Delete all rooms",
-        'description': "Deleting rooms can't be undone.",
+        'title': f"Delete all {n_rooms} rooms",
+        'description': "Deleting rooms can't be undone. All reservations on this room will also be deleted.",
         'button_message': "Confirm delete",
     }
 
@@ -372,51 +421,81 @@ def room_delete_all(request):
 
 
 def room_view(request, pk):
-    """ View for adding rooms"""
+    form = forms.ReservationForm()
     room = get_object_or_404(models.Room, pk=pk)
 
+    if request.method == "POST":
+        form = forms.ReservationForm(request.POST)
+
+        if form.is_valid():
+            instance = form.save(commit=False)
+            instance.room = room
+            instance.user = request.user
+
+            overlap = models.Reservation.objects.filter(  
+                date_bookfrom__lt=form.cleaned_data['date_bookuntil'],  # Existing booking ends AFTER new check-in
+                date_bookuntil__gt=form.cleaned_data['date_bookfrom'],   # Existing booking starts BEFORE new check-out
+                date_checkout__isnull=True,
+            ).exclude(pk=instance.pk if instance else None)
+
+            room_overlap = overlap.filter(room=room)
+            user_overlap = overlap.filter(user=request.user)
+
+            if overlap.exists():
+                if room_overlap.exists():
+                    msg = f"Room {room.name} is already booked for the selected dates."
+                elif user_overlap.exists():
+                    msg = f"You’re already booked elsewhere for one of the selected dates."
+
+                logger.error(msg)
+                form.add_error(None, msg)
+            else:
+                date_bookfrom, date_bookuntil = form.cleaned_data['date_bookfrom'], form.cleaned_data['date_bookuntil']
+                okay = True
+                if date_bookfrom == date_bookuntil:
+                    msg = f"Book from and Book until should not be in the same day."
+                    logger.error(msg)
+                    form.add_error(None, msg)
+                    okay = False
+                if date_bookfrom > date_bookuntil:
+                    msg = f"Book until has to be in the future, not in the past."
+                    logger.error(msg)
+                    form.add_error('date_bookuntil', msg)
+                    okay = False
+
+                if okay:
+                    days = (date_bookuntil - date_bookfrom).days
+                    paid_price = room.price * days
+
+                    instance.paid_price = paid_price
+                    instance.save()
+                    msg = f"room:Reservation for room {instance.room.name} succesfully added."
+                    logger.debug(msg)
+                    messages.success(request, msg)
+                    return redirect("room:reservation:view", instance.pk)
+
     context = {
+        'form': form,
         'title': room.name,
+        'button_message': "Confirm",
         'room': room,
+        'current_url': request.build_absolute_uri(),
     }
 
-    return render(request, "app/room/view.html", context)
+    return render(request, "app/room/room.html", context)
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+# RESERVATION VIEWS
 
 
 
 def reservation_index(request):
     """ View for showing all available rooms"""
 
-    reservation = models.Reservation.objects.all()
-
     context = {
-        'reservation': reservation,
+        'title': "Resevations",
+        'reservations': models.Reservation.objects.filter(user=request.user),
     }
 
     return render(request, "app/reservation/index.html", context)
@@ -424,72 +503,80 @@ def reservation_index(request):
 
 
 @login_required
-def reservation_add(request):
-    """ View for adding reservations"""
-
-    form = forms.RoomForm()
-
-    if request.method == "POST":
-        form = forms.RoomForm(request.POST)
-
-        if form.is_valid():
-            form.save()
-            msg = f"{form.instance} succesfully added."
-            logger.debug(msg)
-            messages.success(request, msg)
-
-    context = {
-        'form': form,
-        'title': "Add Room",
-        'button_message': "Confirm",
-    }
-
-    return render(request, "app/room/form.html", context)
-
-
-
-@login_required
-def reservation_update(request, pk):
-    """ View for adding rooms"""
-
-    room = get_object_or_404(models.Room, pk=pk)
-    form = forms.RoomForm(instance=room)
-
-    if request.method == "POST":
-        form = forms.RoomForm(request.POST, request.FILES, instance=room)
-
-        if form.is_valid():
-            form.save()
-            msg = f"{form.instance} succesfully updated."
-            logger.debug(msg)
-            messages.success(request, msg)
-
-    context = {
-        'form': form,
-        'title': "Update Room",
-        'button_message': "Confirm",
-    }
-
-    return render(request, "app/room/form.html", context)
-
-
-
-@login_required
 def reservation_delete(request, pk):
     """ View for adding rooms"""
 
-    room = get_object_or_404(models.Room, pk=pk)
+    prev = unquote(request.GET.get('prev', ""))
+    next = unquote(request.GET.get('next', ""))
+
+    reservation = get_object_or_404(models.Reservation, pk=pk)
 
     if request.method == "POST":
-        room.delete()
-        msg = f"{room} succesfully deleted."
+        reservation.delete()
+        msg = f"{reservation} succesfully deleted."
         logger.debug(msg)
         messages.success(request, msg)
+        return redirect(next if next else 'room:reservation:index')
 
     context = {
-        'title': f"Delete Room({room.name})",
-        'description': f"Deleting Room({room.name}) can't be undone.",
+        'title': f"Delete reservation({reservation.room.name})",
+        'description': f"Deleting reservation({reservation.room.name}) can't be undone.",
         'button_message': "Confirm delete",
+        'current_url': request.build_absolute_uri(),
+    }
+
+    return render(request, "app/base/base_dialog.html", context)
+
+
+
+@login_required
+def reservation_checkin(request, pk):
+    """ View for adding rooms"""
+
+    reservation = get_object_or_404(models.Reservation, pk=pk)
+    next = unquote(request.GET.get("next", ""))
+
+    if request.method == "POST":
+        reservation.date_checkin = timezone.now()
+        reservation.room.is_available = False
+        reservation.room.save()
+        reservation.save()
+        msg = f"{reservation.room.name} succesfully checked in."
+        logger.debug(msg)
+        messages.success(request, msg)
+        return redirect(next if next else "room:reservation:index")
+
+    context = {
+        'title': f"Check-in in room \"{reservation.room.name}\"",
+        'description': "Once you check in, you cannot undo it.",
+        'button_message': "Confirm",
+    }
+
+    return render(request, "app/base/base_dialog.html", context)
+
+
+
+@login_required
+def reservation_checkout(request, pk):
+    """ View for adding rooms"""
+
+    reservation = get_object_or_404(models.Reservation, pk=pk)
+    next = unquote(request.GET.get("next", ""))
+
+    if request.method == "POST":
+        reservation.date_checkout = timezone.now()
+        reservation.room.is_available = True
+        reservation.room.save()
+        reservation.save()
+        msg = f"{reservation.room.name} succesfully checked out."
+        logger.debug(msg)
+        messages.success(request, msg)
+        return redirect(next if next else "room:reservation:index", request.user.pk)
+
+    context = {
+        'title': f"Check-out in room \"{reservation.room.name}\"",
+        'description': "Once you check out, you cannot undo it.",
+        'button_message': "Confirm",
     }
 
     return render(request, "app/base/base_dialog.html", context)
@@ -501,20 +588,20 @@ def reservation_delete_all(request):
     """ View for adding rooms"""
 
     if request.method == "POST":
-        rooms = models.Room.objects.all()
-        n_rooms = len(rooms)
+        reservations = models.Reservation.objects.filter(user=request.user)
+        n_reservations = len(reservations)
 
-        for room in rooms:
-            room.delete()
+        for reservation in reservations:
+            reservation.delete()
 
-        msg = f"Rooms({n_rooms}) succesfully deleted."
+        msg = f"room:Reservations({n_reservations}) succesfully deleted."
         logger.debug(msg)
         messages.success(request, msg)
-        return redirect("room:index")
+        return redirect("room:reservation:index")
 
     context = {
-        'title': "Delete all rooms",
-        'description': "Deleting rooms can't be undone.",
+        'title': "Delete all reservations",
+        'description': "Deleting reservations can't be undone.",
         'button_message': "Confirm delete",
     }
 
@@ -524,11 +611,16 @@ def reservation_delete_all(request):
 
 def reservation_view(request, pk):
     """ View for adding rooms"""
-    room = get_object_or_404(models.Room, pk=pk)
+    reservation = get_object_or_404(models.Reservation, pk=pk)
+    room = reservation.room
 
     context = {
         'title': room.name,
+        'reservation': reservation,
         'room': room,
+        "current_url": request.build_absolute_uri(),
     }
 
-    return render(request, "app/room/view.html", context)
+    return render(request, "app/room/room.html", context)
+
+
