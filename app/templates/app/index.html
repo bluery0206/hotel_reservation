@@ -60,7 +60,7 @@
             </div>
         </div>
         <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 ">
-            {% for room in rooms %}
+            {% for room, reservations in rooms %}
                 <div class="col">
                     <div class="card">
                         <img src="{{ room.image.url }}" class="card-img-top object-fit-cover" alt="{{ room.image.url }}" height="150">
@@ -94,14 +94,30 @@
                                     </div>
                                 </div>
                             {% endif %}
+                            <div class="mb-3">
+                                Unavailable Dates:
+                                <div class="gy-1 px-2 row row-cols-1">
+                                    {% for reservation in reservations %}
+                                        <div class="col">
+                                            {% if user.is_superuser %}
+                                                <a href="">
+                                                    {{ reservation.date_bookfrom }} - {{ reservation.date_bookuntil }}
+                                                </a>
+                                            {% else %}
+                                                    {{ reservation.date_bookfrom }} - {{ reservation.date_bookuntil }}
+                                            {% endif %}
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
                             <div class="row align-items-center">
                                 <div class="col">
                                     <p class="card-text fs-6 m-0 d-flex align-items-center">
-                                        <strong class="text-success-emphasis me-2">Price: {{ room.get_price_display }}</strong>
+                                        <strong class="text-success-emphasis me-2">Price per day: {{ room.get_price_display }}</strong>
                                     </p>
                                 </div>
                                 <div class="col">
-                                    <a href="#" class="btn btn-success btn-lg w-100">
+                                    <a href="{% url 'room:view' room.pk %}" class="btn btn-success btn-lg w-100">
                                         Reserve
                                     </a>
                                 </div>
