@@ -1,7 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django_resized import ResizedImageField
-from django.core.validators import RegexValidator, MinLengthValidator, FileExtensionValidator
+from django.core import validators
+from datetime import date
 
 from .utils import room_upload_path
 from uuid import uuid4
@@ -77,7 +78,7 @@ class Room(models.Model):
         default=uuid4,
     )
     image = ResizedImageField(
-        validators=[FileExtensionValidator(['png', 'jpg', 'jpeg', 'jfif', 'PNG', 'JPG'])],
+        validators=[validators.FileExtensionValidator(['png', 'jpg', 'jpeg', 'jfif', 'PNG', 'JPG'])],
         upload_to = "images/rooms/",
         blank = True,
         null = True,
@@ -86,7 +87,7 @@ class Room(models.Model):
     name = models.CharField(
         max_length=100,
         validators = [
-            RegexValidator(
+            validators.RegexValidator(
                 r'^[a-zA-Z0-9_.\)\(\[\]\\\|\s]{4,}$',
                 message = "Allowed characters: a-z, A-Z, 0-9, '_', '.', '\', '(', ')', '[', ']' and ' '."
             )
@@ -94,7 +95,7 @@ class Room(models.Model):
     )
     description = models.TextField(
         validators = [
-            RegexValidator(
+            validators.RegexValidator(
                 r'^[a-zA-Z0-9_.\)\(\[\]\\\|\s]+$',
                 message = "Allowed characters: a-z, A-Z, 0-9, '_', '.', '\', '(', ')', '[', ']' and ' '."
             )
@@ -113,14 +114,20 @@ class Room(models.Model):
         return f"Room({self.type}: {self.name})"
     
     @property
+    def total_amenity_fee(self):
+        total = 0
+        if self.amenities.all():
+            for amenity in self.amenities.all():
+                total += amenity.fee
+        return total
+
+    
+    @property
     def price(self) -> float:
         if self.amenities.exists():
-            # Calculate the total price based on the amenities
-            total_price = self.base_price
-            for amenity in self.amenities.all():
-                total_price += amenity.fee
-            return total_price
-        return self.base_price
+            return self.base_price + self.total_amenity_fee 
+        else:
+            return self.base_price
     
     @property
     def get_price_display(self):
@@ -138,8 +145,8 @@ class Room(models.Model):
 class Reservation(models.Model):
     """ Reservation """
     # Delete THIS instance of User or Room is deleted
-    user = models.ForeignKey(User, on_delete=models.CASCADE) 
-    room = models.ForeignKey(Room, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="reservations") 
+    room = models.ForeignKey(Room, on_delete=models.CASCADE, related_name="reservations")
 
     uuid = models.UUIDField(
         primary_key=True,
@@ -148,12 +155,24 @@ class Reservation(models.Model):
         default=uuid4,
     )
 
-    date_checkin = models.DateField(blank=True)  # Start date
-    date_checkout = models.DateField(blank=True)  # End date
+    date_checkin = models.DateField(blank=True, null=True)  # Start date
+    date_checkout = models.DateField(blank=True, null=True)  # End date
 
     date_bookat = models.DateField(auto_now_add=True) 
-    date_bookfrom = models.DateField()  
-    date_bookuntil = models.DateField()
-
+    date_bookfrom = models.DateField(
+        # Reservation date must be today or in the future
+        validators=[validators.MinValueValidator(date.today())],
+    )
+    date_bookuntil = models.DateField(
+        validators=[validators.MinValueValidator(date.today())],
+    )
     paid_price = models.DecimalField(max_digits=10, decimal_places=2)  # Final price after discounts
     discount = models.DecimalField(max_digits=5, decimal_places=2, default=0)  # e.g., 10.50%
+
+    @property
+    def days(self):
+        return (self.date_bookuntil - self.date_bookfrom).days
+
+    @property
+    def get_days_display(self):
+        return f"{self.days} day" if self.days == 1 else f"{self.days} days"
