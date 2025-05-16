@@ -1,0 +1,240 @@
+{% extends 'app/base/default.html' %}
+{% load static %}
+{% load widget_tweaks %}
+
+{% block inner_content %}
+    <div class="container my-4">
+        <div class="row flex-md-row-reverse gy-4 row-cols-1 row-cols-md-2">
+            <div class="col-md-7">
+                <img class="object-fit-cover specific-h-200 specific-h-md-500 w-100 rounded" style="cursor: pointer;" src="{{ room.image.url }}" alt="" data-bs-toggle="modal" data-bs-target="#modal-{{ room.pk }}">
+                <div class="modal fade" id="modal-{{ room.pk }}" tabindex="-1" aria-labelledby="modal-title-1" aria-hidden="true">
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-bodt">
+                                <img class="object-fit-cover h-100 w-100 rounded" src="{{ room.image.url }}" alt="">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-5">
+                <form method="POST" class="col border rounded p-4" novalidate>
+                    {% if form %}
+                        {% csrf_token %}
+                    {% endif %}
+                    <h4>
+                        {{ room.name }}
+                    </h4>
+                    <hr>
+                    <p class="fst-italic text-body-secondary">
+                        {{ room.description }}
+                    </p>
+                    <div>
+                        Room type:
+                        <span class="fw-bold fst-italic">
+                            {{ room.get_type_display }}
+                        </span>
+                    </div>
+                    <div>
+                        Capacity:
+                        <span class="fw-bold fst-italic">
+                            {{ room.get_capacity_display }}
+                        </span>
+                    </div>
+                    <div class="mb-1">
+                        Amenities:
+                        <div class="row g-1 px-2">
+                            {% for amenity in room.amenities.all %}
+                                <div class="col-auto">
+                                    {% if user.is_superuser %}
+                                        <a href="{% url 'amenity:update' amenity.pk %}?next={{ current_url|urlencode }}" title="Update {{ amenity.name }}">
+                                            {{ amenity.name }}</a>
+                                    {% else %}
+                                        {{ amenity.name }}
+                                    {% endif %}
+                                    
+                                    <!-- Adds a comma if current amenity is not the last in the list -->
+                                    {% if not forloop.last %}|{% endif %}
+                                </div>
+                            {% empty %}
+                                <div class="border">
+                                    No amenities added
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% if reservation %}
+                        <div>
+                            Reservation issue:
+                            <span class="fw-bold fst-italic">
+                                {{ reservation.date_bookat}}
+                            </span>
+                        </div>
+                        <div>
+                            Reserved from:
+                            <span class="fw-bold fst-italic">
+                                {{ reservation.date_bookfrom}}
+                            </span>
+                        </div>
+                        <div>
+                            Reserved until:
+                            <span class="fw-bold fst-italic">
+                                {{ reservation.date_bookuntil}}
+                            </span>
+                        </div>
+                        <div>
+                            Total days of stay:
+                            <span class="fw-bold fst-italic">
+                                {{ reservation.get_days_display}}
+                            </span>
+                        </div>
+                    {% else %}
+                        <div class="mb-3">
+                            Unavailable Dates:
+                            <div class="gy-1 px-2 row row-cols-2">
+                                {% for reservation in room.reservations.all %}
+                                    <div class="col">
+                                        {% if user.is_superuser %}
+                                            <a href="">
+                                                {{ reservation.date_bookfrom }} - {{ reservation.date_bookuntil }}
+                                            </a>
+                                        {% else %}
+                                                {{ reservation.date_bookfrom }} - {{ reservation.date_bookuntil }}
+                                        {% endif %}
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% endif %}
+                    
+                    {% if form %}
+                        <hr>
+                        {% for error in form.non_field_errors %}
+                            <div class="alert alert-danger">
+                                {{error }}
+                            </div>
+                        {% endfor %}
+                        <div class="mb-3">
+                            <div class="row row-cols-1 row-cols-md-2">
+                                <div class="col">
+                                    <label for="{{ form.date_bookfrom.id_for_label }}" class="form-label">{{ form.date_bookfrom.label}}</label>
+
+                                    {% if form.date_bookfrom.errors or form.errors %}
+                                        {{ form.date_bookfrom|add_class:"is-invalid" }}
+                                    {% elif not form.date_bookfrom.errors and request.method == "POST" %}
+                                        {{ form.date_bookfrom|add_class:"is-valid"}}
+                                    {% else %}
+                                        {{ form.date_bookfrom }}
+                                    {% endif %}
+
+                                    {% if form.date_bookfrom.errors %}
+                                        {% for error in form.date_bookfrom.errors %}
+                                            <div class="invalid-feedback">
+                                                {{ error }}
+                                            </div>
+                                        {% endfor %}
+                                    {% endif %}
+                                </div>
+                                <div class="col">
+                                    <label for="{{ form.date_bookuntil.id_for_label }}" class="form-label">{{ form.date_bookuntil.label}}</label>
+
+                                    {% if form.date_bookuntil.errors or form.errors %}
+                                        {{ form.date_bookuntil|add_class:"is-invalid" }}
+                                    {% elif not form.date_bookuntil.errors and request.method == "POST" %}
+                                        {{ form.date_bookuntil|add_class:"is-valid"}}
+                                    {% else %}
+                                        {{ form.date_bookuntil }}
+                                    {% endif %}
+
+                                    {% if form.date_bookuntil.errors %}
+                                        {% for error in form.date_bookuntil.errors %}
+                                            <div class="invalid-feedback">
+                                                {{ error }}
+                                            </div>
+                                        {% endfor %}
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
+                    {% if reservation %}
+                        <hr>
+                        <div class="row row-cols-1 row-cols-md-2 g-2">
+                            <div class="col">
+                                <div class="btn disabled border rounded w-100 p-2">
+
+                                Price: {{ reservation.room.price }}
+                                </div>
+                                    
+                            </div>
+                            <div class="col">
+                                <div class="btn disabled border rounded w-100 p-2">
+
+                                Paid price: {{ reservation.paid_price }}
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
+                    <hr>
+                    <div class="row g-2 align-items-center">
+                        {% if reservation %}
+                            <div class="col">
+                                {% if reservation.date_checkin %}
+                                    <div class="btn btn-lg w-100 disabled">
+                                        <div>
+                                            Checked in on:
+                                        </div> 
+                                        <div>
+                                            {{ reservation.date_checkin }}
+                                        </div>
+                                    </div>
+                                {% else %}
+                                    <a class="btn btn-lg btn-success w-100" href="{% url 'room:reservation:checkin' reservation.pk %}?next={{ current_url|urlencode }}">
+                                        Check in now
+                                    </a>
+                                {% endif %}
+                            </div>
+                            <div class="col">
+                                {% if reservation.date_checkout and reservation.date_checkin %}
+                                    <div class="btn btn-lg w-100 disabled">
+                                        <div>
+                                            Checked out on:
+                                        </div> 
+                                        <div>
+                                            {{ reservation.date_checkout }}
+                                        </div>
+                                    </div>
+                                {% elif not reservation.date_checkout and not reservation.date_checkin %}
+                                    <div class="btn btn-lg w-100 disabled">
+                                        You haven't checked in
+                                    </div>
+                                {% else %}
+                                    <a class="btn btn-lg btn-success w-100" href="{% url 'room:reservation:checkout' reservation.pk %}?next={{ current_url|urlencode }}">
+                                        Check out now
+                                    </a>
+                                {% endif %}
+                            </div>
+                        {% else %}
+                            <div class="col">
+                                <p class="card-text py-2 fs-6 m-0 d-flex align-items-center">
+                                    <strong class="text-success-emphasis me-2">Price per day: {{ room.get_price_display }}</strong>
+                                </p>
+                            </div>
+                            <div class="col">
+                                <button type="submit" class="btn btn-success btn-lg w-100">
+                                    Reserve
+                                </button>
+                            </div>
+                        {% endif %}
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+
+{% endblock%}

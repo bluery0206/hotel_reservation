@@ -13,10 +13,10 @@
                         <div class="col-auto">
                             <div class="row gx-1">
                                 <div class="col-auto">
-                                    <a href="{% url 'room:add' %}" class="btn btn-success">Add Room</a>
+                                    <a href="{% url 'room:add' %}?next={{ current_url|urlencode }}" class="btn btn-success">Add Room</a>
                                 </div>
                                 <div class="col-auto">
-                                    <a href="{% url 'room:delete_all' %}" class="btn btn-danger">Delete All</a>
+                                    <a href="{% url 'room:delete_all' %}?next={{ current_url|urlencode }}" class="btn btn-danger">Delete All</a>
                                 </div>
                             </div>
                         </div>
@@ -33,60 +33,108 @@
                                 <th scope="col">Name</th>
                                 <th scope="col">Type</th>
                                 <th scope="col">Amenities</th>
-                                <th scope="col" class="text-nowrap">Base Price</th>
-                                <th scope="col">Price</th>
+                                <th scope="col" class="text-nowrap">Price (per day)</th>
                                 <th scope="col">Capacity</th>
-                                <th scope="col" class="text-center specific-w-150">Actions</th>
+                                <th scope="col">Unavailable dates</th>
+                                <th scope="col" class="text-center">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {% for room in rooms %}
+                            {% for room, reservations in rooms %}
                                 <tr>
-                                    <th scope="row">
-                                        {% if room.image %}
-                                            <img src="{{ room.image.url }}" alt="{{ room.name }}" class=" object-fit-cover" height="75" width="100">
-                                        {% else %}
-                                            <img src="{% static 'app/images/room.png' %}" alt="{{ room.name }}" class=" object-fit-cover" height="75" width="100">
-                                        {% endif %}
-                                    </th>
+                                    <td scope="row">
+                                        <img class="object-fit-cover" style="cursor: pointer;" src="{{ room.image.url }}" height="75" width="100" alt="" data-bs-toggle="modal" data-bs-target="#modal-{{ room.pk }}">
+                                        <div class="modal fade" id="modal-{{ room.pk }}" tabindex="-1" aria-labelledby="modal-title-1" aria-hidden="true">
+                                            <div class="modal-dialog modal-lg">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                    </div>
+                                                    <div class="modal-bodt">
+                                                        <img class="object-fit-cover h-100 w-100 rounded" src="{{ room.image.url }}" alt="">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
                                     <td>
-                                        <a href="{% url 'room:view' room.pk %}">
-                                            {{ room.name }}
-                                        </a>
+                                        {{ room.name }}
                                     </td>
                                     <td>
                                         {{ room.get_type_display }}
                                     </td>
                                     <td>
-                                        {% for amenity in room.amenities.all %}
-                                            <span>
-                                                <!-- Adds a comma if current amenity is not the last in the list -->
-                                                {{ amenity.name }}{% if not forloop.last %}, {% endif %}
-                                            </span>
-                                        {% empty %}
-                                            <span>
-                                                No amenities added
-                                            </span>
+                                        {% if user.is_superuser %}
+                                            {% for amenity in room.amenities.all %}
+                                                <span>
+                                                    <!-- Adds a comma if current amenity is not the last in the list -->
+                                                    <a href="{% url 'amenity:update' amenity.pk %}?next={{ current_url|urlencode }}">
+                                                        {{ amenity.name }}
+                                                    </a>
+                                                    {% if not forloop.last %}, {% endif %}
+                                                </span>
+                                            {% empty %}
+                                                <span>
+                                                    No amenities added
+                                                </span>
+                                            {% endfor %}
+                                        {% else %}
+                                            {% for amenity in room.amenities.all %}
+                                                <span>
+                                                    <!-- Adds a comma if current amenity is not the last in the list -->
+                                                    {{ amenity.name }}{% if not forloop.last %}, {% endif %}
+                                                </span>
+                                            {% empty %}
+                                                <span>
+                                                    No amenities added
+                                                </span>
+                                            {% endfor %}
+                                        {% endif %}
+                                    </td>
+                                    <td class="text-nowrap">
+                                        {{ room.get_price_display }}
+                                    </td>
+                                    <td>
+                                        {{ room.get_capacity_display }}
+                                    </td>
+                                    <td>
+                                        {% for reservation in reservations %}
+                                            {% if user.is_superuser %}
+                                                <div class="text-nowrap">
+                                                    <a href="{% url 'room:reservation:view' reservation.pk %}">
+                                                        {{ reservation.date_bookfrom }} - {{ reservation.date_bookuntil }}
+                                                    </a>
+                                                </div>
+                                            {% else %}
+                                                <div class="text-nowrap">
+                                                    {{ reservation.date_bookfrom }} - {{ reservation.date_bookuntil }}
+                                                </div>
+                                            {% endif %}
                                         {% endfor %}
                                     </td>
-                                    <td class="text-nowrap">{{ room.get_base_price_display }}</td>
-                                    <td class="text-nowrap">{{ room.get_price_display }}</td>
-                                    <td>{{ room.get_capacity_display }}</td>
                                     <td>
-                                        {% if user.is_superuser %}
-                                            <div class="row justify-content-center gx-2 gy-2">
-                                                <div class="col-auto">
-                                                    <a href="{% url 'room:update' room.pk %}" class="btn btn-success" href="">Update</a> 
-                                                </div>
-                                                <div class="col-auto">
-                                                    <a href="{% url 'room:delete' room.pk %}" class="btn btn-danger" href="">Delete</a>
-                                                </div>
+                                        <div class="row justify-content-center gx-2 px-2 gy-2 flex-wrap flex-md-nowrap">
+                                            <div class="col-auto">
+                                                <a href="{% url 'room:view' room.pk %}" class="btn btn-success" title="Reserve Room: {{ room.name }}">
+                                                    <i class="fa-solid fa-eye"></i>
+                                                    View
+                                                </a>
                                             </div>
-                                        {% else %}
-                                            <a href="#" class="btn btn-success btn-lg w-100">
-                                                Reserve
-                                            </a>
-                                        {% endif %}
+                                            {% if user.is_superuser %}
+                                                <div class="col-auto">
+                                                    <a href="{% url 'room:update' room.pk %}?next={{ current_url|urlencode }}" class="btn btn-secondary title="Update Room: {{ room.name }}">
+                                                        <i class="fa-solid fa-pen"></i>
+                                                        <span class="visually-hidden">Update</span>
+                                                    </a> 
+                                                </div>
+                                                <div class="col-auto">
+                                                    <a href="{% url 'room:delete' room.pk %}?next={{ current_url|urlencode }}" class="btn btn-danger" title="Delete Room: {{ room.name }}">
+                                                        <i class="fa-solid fa-trash"></i>
+                                                        <span class="visually-hidden">Delete</span>
+                                                    </a>
+                                                </div>
+                                            {% endif %}
+                                        </div>
                                     </td>
                                 </tr>
                             {% endfor %}
