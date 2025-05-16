@@ -302,9 +302,15 @@ def room_index(request):
     # else:
     #     # If the user is not a superuser, show only available rooms
     #     rooms = models.Room.objects.filter(is_available=True)
-    
-    rooms = models.Room.objects.filter()
+    q = request.GET.get("q", "")
+    print(f"{q = }")
+    if q:
+        rooms = models.Room.objects.filter(name__icontains=q)
+    else:
+        rooms = models.Room.objects.filter()
+
     rooms = [[room, room.reservations.filter(date_checkout__isnull=True).order_by('date_bookfrom')] for room in rooms]
+
     context = {
         'rooms': rooms,
         'current_url': request.build_absolute_uri(),
