@@ -3,39 +3,93 @@
 {% load widget_tweaks %}
 
 {% block form %}
-    <div class="mb-3">
-        <label for="{{ form.name.id_for_label }}" class="form-label">{{ form.name.label}}</label>
-        
-        {% if form.name.errors or form.errors %}
-            {{ form.name|add_class:"is-invalid" }}
-        {% elif not form.name.errors and request.method == "POST" %}
-            {{ form.name|add_class:"is-valid"}}
+    <div class="mb">
+        {% if user.is_superuser %}
+            {% for reservation in room.reservations.all %}
+                <div class="text-nowrap">
+                    <a href="">
+                        {{ reservation.date_bookfrom }} - {{ reservation.date_bookuntil }}
+                    </a>
+                </div>
+            {% endfor %}
         {% else %}
-            {{ form.name }}
+            {% for reservation in room.reservations.all %}
+                <div class="text-nowrap">
+                    {{ reservation.date_bookfrom }} - {{ reservation.date_bookuntil }}
+                </div>
+            {% endfor %}
+        {% endif %}
+    </div>
+    <div class="mb-0">
+        {% if user.is_superuser %}
+            {% for amenity in room.amenities.all %}
+                <span>
+                    <!-- Adds a comma if current amenity is not the last in the list -->
+                    <a href="{% url 'amenity:update' amenity.pk %}">
+                        {{ amenity.name }}
+                    </a>
+                    {% if not forloop.last %}, {% endif %}
+                </span>
+            {% empty %}
+                <span>
+                    No amenities added
+                </span>
+            {% endfor %}
+        {% else %}
+            {% for amenity in room.amenities.all %}
+                <span>
+                    <!-- Adds a comma if current amenity is not the last in the list -->
+                    {{ amenity.name }}{% if not forloop.last %}, {% endif %}
+                </span>
+            {% empty %}
+                <span>
+                    No amenities added
+                </span>
+            {% endfor %}
+        {% endif %}
+    </div>
+    <div class="mb-0">
+        {{ room.get_price_display }}
+    </div>
+    <div class="mb-0">
+        {{ room.capacity }}
+    </div>
+    <div class="mb-0">
+        {{ room.type }}
+    </div>
+    <div class="mb-3">
+        <label for="{{ form.date_bookfrom.id_for_label }}" class="form-label">{{ form.date_bookfrom.label}}</label>
+
+        {% if form.date_bookfrom.errors or form.errors %}
+            {{ form.date_bookfrom|add_class:"is-invalid" }}
+        {% elif not form.date_bookfrom.errors and request.method == "POST" %}
+            {{ form.date_bookfrom|add_class:"is-valid"}}
+        {% else %}
+            {{ form.date_bookfrom }}
         {% endif %}
 
-        {% if form.name.errors %}
-            {% for error in form.name.errors %}
+        {% if form.date_bookfrom.errors %}
+            {% for error in form.date_bookfrom.errors %}
                 <div class="invalid-feedback">
                     {{ error }}
                 </div>
             {% endfor %}
         {% endif %}
     </div>
-    
+
     <div class="mb-3">
-        <label for="{{ form.fee.id_for_label }}" class="form-label">{{ form.fee.label}}</label>
-        
-        {% if form.fee.errors or form.errors %}
-            {{ form.fee|add_class:"is-invalid" }}
-        {% elif not form.fee.errors and request.method == "POST" %}
-            {{ form.fee|add_class:"is-valid"}}
+        <label for="{{ form.date_bookuntil.id_for_label }}" class="form-label">{{ form.date_bookuntil.label}}</label>
+
+        {% if form.date_bookuntil.errors or form.errors %}
+            {{ form.date_bookuntil|add_class:"is-invalid" }}
+        {% elif not form.date_bookuntil.errors and request.method == "POST" %}
+            {{ form.date_bookuntil|add_class:"is-valid"}}
         {% else %}
-            {{ form.fee }}
+            {{ form.date_bookuntil }}
         {% endif %}
 
-        {% if form.fee.errors %}
-            {% for error in form.fee.errors %}
+        {% if form.date_bookuntil.errors %}
+            {% for error in form.date_bookuntil.errors %}
                 <div class="invalid-feedback">
                     {{ error }}
                 </div>

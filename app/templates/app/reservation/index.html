@@ -7,50 +7,83 @@
             <div class="">
                 <div class="row py-0 align-items-center">
                     <div class="col">
-                        <h4 class="p-0 m-0">Amenities</h4>
+                        <h4 class="p-0 m-0">Reservations</h4>
                     </div>
                     <div class="col-auto">
                         <div class="row gx-1">
                             <div class="col-auto">
-                                <a href="{% url 'amenity:add' %}" class="btn btn-success">Add Amenity</a>
-                            </div>
-                            <div class="col-auto">
-                                <a href="{% url 'amenity:delete_all' %}" class="btn btn-danger">Delete All</a>
+                                <a href="{% url 'room:reservation:delete_all' %}?next={{ current_url }}" class="btn btn-danger">Delete All</a>
                             </div>
                         </div>
                     </div>
                 </div>
                 <hr>
-                <table class="table caption-top table-hover table-responsive">
-                    <caption class="visually-hidden">List of amenities</caption>
-                    <thead class="table-secondary">
-                        <tr>
-                            <th scope="col">#</th>
-                            <th scope="col">Name</th>
-                            <th scope="col">Fee</th>
-                            <th scope="col" class="specific-w-150 text-center">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for amenity in amenities %}
+                <div class="table-responsive">
+                    <table class="table caption-top table-hover">
+                        <caption class="visually-hidden">List of amenities</caption>
+                        <thead class="table-secondary">
                             <tr>
-                                <th scope="row">{{ forloop.counter }}</th>
-                                <td>{{ amenity.name }}</td>
-                                <td>{{ amenity.get_fee_display }}</td>
-                                <td>
-                                    <div class="row gx-2 gy-2 p-0 justify-content-center">
-                                        <div class="col-auto">
-                                            <a class="btn btn-sm m-0 btn-success" href="{% url 'amenity:update' amenity.pk %}">Update</a> 
-                                        </div>
-                                        <div class="col-auto">
-                                            <a class="btn btn-sm m-0 btn-danger" href="{% url 'amenity:delete' amenity.pk %}">Delete</a>
-                                        </div>
-                                    </div>
-                                </td>
+                                <th scope="col" class="text-nowrap">Room</th>
+                                <th scope="col" class="text-nowrap">Checked in</th>
+                                <th scope="col" class="text-nowrap">Checked out</th>
+                                <th scope="col" class="text-nowrap">Reserved from</th>
+                                <th scope="col" class="text-nowrap">Reserved until</th>
+                                <th scope="col" class="text-nowrap">Paid price</th>
+                                <th scope="col" class="specific-w-150 text-center">Actions</th>
                             </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            {% for reservation in reservations %}
+                                <tr>
+                                    <td>
+                                        <a href="{% url 'room:view' reservation.room.pk %}">
+                                            {{ reservation.room.name }}
+                                        </a>
+                                    </td>
+                                    <td class="">
+                                        {% if reservation.date_checkin %}
+                                            {{ reservation.date_checkin }}
+                                        {% else %}
+                                            <a class="btn btn-sm btn-success" href="{% url 'room:reservation:checkin' reservation.pk %}?next={{ current_url }}">
+                                                Check in now
+                                            </a>
+                                        {% endif %}
+                                    </td>
+                                    <td class="">
+                                        {% if reservation.date_checkout and reservation.date_checkin %}
+                                            {{ reservation.date_checkout }}
+                                        {% elif not reservation.date_checkout and not reservation.date_checkin %}
+                                            Not checked in
+                                        {% else %}
+                                            <a class="btn btn-sm btn-success" href="{% url 'room:reservation:checkout' reservation.pk %}?next={{ current_url }}">
+                                                Check out now
+                                            </a>
+                                        {% endif %}
+                                    </td>
+                                    <td class="text-nowrap">
+                                        {{ reservation.date_bookfrom }}
+                                    </td>
+                                    <td class="text-nowrap">
+                                        {{ reservation.date_bookuntil }}
+                                    </td>
+                                    <td class="text-nowrap">
+                                        {{ reservation.paid_price }}
+                                    </td>
+                                    <td>
+                                        <div class="row flex-lg-nowrap gx-2 gy-2 p-0 justify-content-center">
+                                            <div class="col-auto">
+                                                <a class="btn btn-sm m-0 btn-secondary" href="{% url 'room:reservation:view' reservation.pk %}">View details</a>
+                                            </div>
+                                            <div class="col-auto">
+                                                <a class="btn btn-sm m-0 btn-danger" href="{% url 'room:reservation:delete' reservation.pk %}?next={{ current_url }}">Delete</a>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
