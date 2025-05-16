@@ -26,7 +26,7 @@ def index(request):
     """ Shows the index/home/dashboard page """
 
     rooms = models.Room.objects.all().order_by('-date_update')[:12]
-    rooms = [[room, room.reservations.filter(date_checkout__isnull=True)] for room in rooms]
+    rooms = [[room, room.reservations.filter(date_checkout__isnull=True).order_by('date_bookfrom')] for room in rooms]
 
     context = {
         "rooms": rooms,
@@ -304,7 +304,7 @@ def room_index(request):
     #     rooms = models.Room.objects.filter(is_available=True)
     
     rooms = models.Room.objects.filter()
-    rooms = [[room, room.reservations.filter(date_checkout__isnull=True)] for room in rooms]
+    rooms = [[room, room.reservations.filter(date_checkout__isnull=True).order_by('date_bookfrom')] for room in rooms]
     context = {
         'rooms': rooms,
         'current_url': request.build_absolute_uri(),
@@ -423,6 +423,7 @@ def room_delete_all(request):
 def room_view(request, pk):
     form = forms.ReservationForm()
     room = get_object_or_404(models.Room, pk=pk)
+    reservations = room.reservations.filter(date_checkout__isnull=True).order_by('date_bookfrom')
 
     if request.method == "POST":
         form = forms.ReservationForm(request.POST)
@@ -479,6 +480,7 @@ def room_view(request, pk):
         'title': room.name,
         'button_message': "Confirm",
         'room': room,
+        'reservations': reservations,
         'current_url': request.build_absolute_uri(),
     }
 

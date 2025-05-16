@@ -95,7 +95,7 @@
                         <div class="mb-3">
                             Unavailable Dates:
                             <div class="gy-1 px-2 row row-cols-2">
-                                {% for reservation in room.reservations.all %}
+                                {% for reservation in reservations %}
                                     <div class="col">
                                         {% if user.is_superuser %}
                                             <a href="">
