@@ -9,13 +9,15 @@
                     <div class="col">
                         <h4 class="p-0 m-0">Reservations</h4>
                     </div>
-                    <div class="col-auto">
-                        <div class="row gx-1">
-                            <div class="col-auto">
-                                <a href="{% url 'room:reservation:delete_all' %}?next={{ current_url }}" class="btn btn-danger">Delete All</a>
+                    {% if user.is_superuser %}
+                        <div class="col-auto">
+                            <div class="row gx-1">
+                                <div class="col-auto">
+                                    <a href="{% url 'room:reservation:delete_all' %}?next={{ current_url }}" class="btn btn-danger">Delete All</a>
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    {% endif %}
                 </div>
                 <hr>
                 <div class="table-responsive">
@@ -74,9 +76,11 @@
                                             <div class="col-auto">
                                                 <a class="btn btn-sm m-0 btn-secondary" href="{% url 'room:reservation:view' reservation.pk %}">View details</a>
                                             </div>
-                                            <div class="col-auto">
-                                                <a class="btn btn-sm m-0 btn-danger" href="{% url 'room:reservation:delete' reservation.pk %}?next={{ current_url }}">Delete</a>
-                                            </div>
+                                            {% if user.is_superuser %}
+                                                <div class="col-auto">
+                                                    <a class="btn btn-sm m-0 btn-danger" href="{% url 'room:reservation:delete' reservation.pk %}?next={{ current_url }}">Delete</a>
+                                                </div>
+                                            {% endif %}
                                         </div>
                                     </td>
                                 </tr>
