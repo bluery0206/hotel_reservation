@@ -51,7 +51,8 @@ auth_patterns = [
 ]
 
 profile_patterns = [
-	path("<uuid:pk>/", views.profile, name="index"),
+	path("view/<uuid:pk>/", views.profile_view, name="view"),
+	path("delete/<uuid:pk>/", views.profile_delete, name="delete"),
 ]
 
 amenity_patterns = [
@@ -62,6 +63,17 @@ amenity_patterns = [
 	path("delete/all", views.amenity_delete_all, name="delete_all"),
 ]
 
+
+reservation_patterns = [
+	path("all/", views.reservation_index, name="index"),
+	path("delete/<uuid:pk>/", views.reservation_delete, name="delete"),
+	path("delete/all/", views.reservation_delete_all, name="delete_all"),
+	path("view/<uuid:pk>/", views.reservation_view, name="view"),
+	
+	path("checkin/<uuid:pk>/", views.reservation_checkin, name="checkin"),
+	path("checkout/<uuid:pk>/", views.reservation_checkout, name="checkout"),
+]
+
 room_patterns = [
 	path("all/", views.room_index, name="index"),
 	path("add/", views.room_add, name="add"),
@@ -69,6 +81,8 @@ room_patterns = [
 	path("delete/<uuid:pk>/", views.room_delete, name="delete"),
 	path("delete/all/", views.room_delete_all, name="delete_all"),
 	path("view/<uuid:pk>/", views.room_view, name="view"),
+    
+	path("reservation/", include((reservation_patterns, 'reservation'))),
 ]
 
 urlpatterns = [
