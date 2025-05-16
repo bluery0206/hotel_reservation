@@ -49,13 +49,10 @@
                         <div class="col-auto">
                             <a href="{% url 'room:index' %}" class="btn me-2">Rooms</a>
                         </div>
-                        {% if not user.is_superuser and user.is_authenticated %}
-                            <div class="col-auto">
-                                <div class="btn me-2">Reservations</div>
-                            </div>
-                        {% endif %}
-
                         {% if user.is_authenticated %}
+                            <div class="col-auto">
+                                <a href="{% url 'room:reservation:index' %}" class="btn me-2">Reservations</a>
+                            </div>
                             <div class="col-auto">
                                 <div class="dropdown">
                                     <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown"
@@ -65,7 +62,7 @@
                                     </button>
                                     <ul class="dropdown-menu">
                                         <li><h6 class="dropdown-header">{{ request.user.username }}</h6></li>
-                                        <li><a href="{% url 'profile:index' request.user.profile.pk %}" class="dropdown-item">Profile</a></li>
+                                        <li><a href="{% url 'profile:view' request.user.profile.pk %}" class="dropdown-item">Profile</a></li>
                                         <li><a href="#" class="dropdown-item">Settings</a></li>
                                         <li><a href="{% url 'auth:signout' %}" class="dropdown-item">Logout</a></li>
                                     </ul>
