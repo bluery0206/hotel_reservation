@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.core.validators import RegexValidator, MinLengthValidator, FileExtensionValidator
 
-from .models import Profile, Amenity, Room
+from . import models
 
 class SignUpForm(UserCreationForm):
     """ User Registration Form """
@@ -98,7 +98,7 @@ class ProfileUpdateForm(forms.ModelForm):
 
         # save it to the model
         # Whenever this forms validates, this is going to create a new User
-        model = Profile
+        model = models.Profile
 
         # fields are going to be shown on our form and in what order
         fields = ['image']
@@ -215,7 +215,7 @@ class AmenityForm(forms.ModelForm):
     )
 
     class Meta:
-        model = Amenity
+        model = models.Amenity
         fields = ['name', 'fee']
 
 
@@ -223,7 +223,7 @@ class RoomForm(forms.ModelForm):
     class Meta:
         # save it to the model
         # Whenever this forms validates, this is going to create a new User
-        model = Room
+        model = models.Room
 
         # fields are going to be shown on our form and in what order
         fields = [
@@ -276,20 +276,31 @@ class RoomForm(forms.ModelForm):
 
 
 
-# class ReservationForm(forms.ModelForm):
-#     class Meta:
-#         # save it to the model
-#         # Whenever this forms validates, this is going to create a new User
-#         model = Room
+class ReservationForm(forms.ModelForm):
+    class Meta:
+        # save it to the model
+        # Whenever this forms validates, this is going to create a new User
+        model = models.Reservation
 
-#         # fields are going to be shown on our form and in what order
-#         fields = [
-#             'date_bookuntil',
-#         ]
-#         widgets = {
-#             'date_bookuntil': forms.DateField(attrs={
-#                     'class' : 'form-control',
-#                 }
-#             ),
-#         }
+        # fields are going to be shown on our form and in what order
+        fields = [
+            'date_bookfrom',
+            'date_bookuntil',
+        ]
+        widgets = {
+            'date_bookfrom': forms.DateInput(
+                format=('%Y-%m-%d'),
+                attrs={
+                    'class' : 'form-control',
+                    'type': 'date',
+                },
+            ),
+            'date_bookuntil': forms.DateInput(
+                format=('%Y-%m-%d'),
+                attrs={
+                    'class' : 'form-control',
+                    'type': 'date',
+                },
+            ),
+        }
 
