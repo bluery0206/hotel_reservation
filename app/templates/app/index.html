@@ -63,7 +63,19 @@
             {% for room, reservations in rooms %}
                 <div class="col">
                     <div class="card">
-                        <img src="{{ room.image.url }}" class="card-img-top object-fit-cover" alt="{{ room.image.url }}" height="150">
+                        <img class="card-img-top object-fit-cover" style="cursor: pointer;" src="{{ room.image.url }}" hheight="150" alt="" data-bs-toggle="modal" data-bs-target="#modal-{{ room.pk }}">
+                        <div class="modal fade" id="modal-{{ room.pk }}" tabindex="-1" aria-labelledby="modal-title-1" aria-hidden="true">
+                            <div class="modal-dialog modal-lg">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-bodt">
+                                        <img class="object-fit-cover h-100 w-100 rounded" src="{{ room.image.url }}" alt="">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                         <div class="card-body">
                             <h5 class="card-title py-1 m-0">
                                 <a href="{% url 'room:view' room.pk %}">
