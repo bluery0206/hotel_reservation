@@ -1,4 +1,4 @@
-# Student Scoring System
+# Resho - Hotel Reservation System
 
 A Django-based web application for instructors to manage student scores and academic records offline.
 
