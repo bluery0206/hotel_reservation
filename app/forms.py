@@ -5,51 +5,29 @@ from django.core.validators import RegexValidator, MinLengthValidator, FileExten
 
 from . import models
 
-class SignUpForm(UserCreationForm):
-    """ User Registration Form """
 
-    email = forms.EmailField(
+
+class SignUpForm(UserCreationForm):
+    # Custom validators because django doesnt have validation for names
+    first_name = forms.CharField(
+        validators=[RegexValidator(
+                r'^[a-zA-Z\s]+$', 
+                message="Letters only."
+        )],
         widget = forms.TextInput(attrs={
-                'class' : 'form-control',
-                'placeholder': "example@domain.com",
-                'minlength': 4,
+            'class' : 'form-control',
+            'placeholder': "Juan",
         }),
     )
-    username = forms.CharField(
-        validators = [
-            RegexValidator(
-                r'^[a-zA-Z0-9_.]{4,}$',
-                message = "Letters, numbers, underscore, and period only."
-            )
-        ],
-        widget = forms.TextInput(attrs={
-                'class' : 'form-control',
-                'placeholder': "example_example02",
-        })
-    )
-    first_name = forms.CharField(
-        validators = [
-            RegexValidator(
-                r'^[a-zA-Z\s]+$',
-                message = "Letters only."
-            )
-        ],
-        widget = forms.TextInput(attrs={
-                'class' : 'form-control',
-                'placeholder': "Juan",
-        })
-    )
     last_name = forms.CharField(
-        validators = [
-            RegexValidator(
-                r'^[a-zA-Z\s]+$',
-                message = "Letters only."
-            )
-        ],
+        validators=[RegexValidator(
+            r'^[a-zA-Z\s]+$', 
+            message="Letters only."
+        )],
         widget = forms.TextInput(attrs={
-                'class' : 'form-control',
-                'placeholder': "Dela Cruz",
-        })
+            'class' : 'form-control',
+            'placeholder': "Dela Cruz",
+        }),
     )
     password1 = forms.CharField(
         validators = [
@@ -71,100 +49,79 @@ class SignUpForm(UserCreationForm):
     )
 
     class Meta:
-        """ Metadata """
-
         # save it to the model
         # Whenever this forms validates, this is going to create a new User
         model = User
 
         # fields are going to be shown on our form and in what order
         fields = ['first_name', 'last_name', 'username', 'email', 'password1', 'password2']
-
-
-class ProfileUpdateForm(forms.ModelForm):
-    """ Profile update Form """
-
-    image = forms.FileField(
-        validators=[FileExtensionValidator(['png', 'jpg', 'jpeg', 'jfif', 'PNG', 'JPG'])],
-        allow_empty_file = True,
-        required = False,
-        widget = forms.FileInput(attrs={
-            'class' : 'form-control',
-        }),
-    )
-
-    class Meta:
-        """ Metadata """
-
-        # save it to the model
-        # Whenever this forms validates, this is going to create a new User
-        model = models.Profile
-
-        # fields are going to be shown on our form and in what order
-        fields = ['image']
-
-
-class UserUpdateForm(forms.ModelForm):
-    """ Profile update Form """
-
-    email = forms.EmailField(
-        widget = forms.TextInput(attrs={
+        widgets = {
+            "email": forms.EmailInput(attrs={
                 'class' : 'form-control',
                 'placeholder': "example@domain.com",
                 'minlength': 4,
-        }),
-    )
-    username = forms.CharField(
-        validators = [
-            RegexValidator(
-                r'^[a-zA-Z0-9_.]{4,}$',
-                message = "Letters, numbers, underscore, and period only."
-            )
-        ],
-        widget = forms.TextInput(attrs={
+            }),
+            "username": forms.TextInput(attrs={
                 'class' : 'form-control',
                 'placeholder': "example_example02",
-        })
-    )
-    first_name = forms.CharField(
-        validators = [
-            RegexValidator(
-                r'^[a-zA-Z\s]+$',
-                message = "Letters only."
-            )
-        ],
-        widget = forms.TextInput(attrs={
+            }),
+        }
+
+
+
+class ProfileUpdateForm(forms.ModelForm):
+    class Meta:
+        model = models.Profile
+        fields = ['image']
+        widgets = {
+            "image": forms.FileInput(attrs={
                 'class' : 'form-control',
-                'placeholder': "Juan",
-        })
+            }),
+        }
+
+
+
+class UserUpdateForm(forms.ModelForm):
+    # Custom validators because django doesnt have validation for names
+    first_name=forms.CharField(
+        validators=[
+            RegexValidator(r'^[a-zA-Z\s]+$', 
+            message="Letters only.")
+        ],
+        widget=forms.TextInput(attrs={
+            'class' : 'form-control',
+            'placeholder': "Juan",
+        }),
     )
     last_name = forms.CharField(
-        validators = [
-            RegexValidator(
-                r'^[a-zA-Z\s]+$',
-                message = "Letters only."
-            )
+        validators=[
+            RegexValidator(r'^[a-zA-Z\s]+$', 
+            message="Letters only.")
         ],
-        widget = forms.TextInput(attrs={
-                'class' : 'form-control',
-                'placeholder': "Dela Cruz",
-        })
+        widget=forms.TextInput(attrs={
+            'class' : 'form-control',
+            'placeholder': "Dela Cruz",
+        }),
     )
 
     class Meta:
-        """ Metadata """
-
-        # save it to the model
-        # Whenever this forms validates, this is going to create a new User
         model = User
-
-        # fields are going to be shown on our form and in what order
         fields = ['first_name', 'last_name', 'username', 'email']
+        widgets = {
+            "email": forms.EmailInput(attrs={
+                'class' : 'form-control',
+                'placeholder': "example@domain.com",
+                'minlength': 4,
+            }),
+            "username": forms.TextInput(attrs={
+                'class' : 'form-control',
+                'placeholder': "example_example02",
+            }),
+        }
+
 
 
 class SignInForm(AuthenticationForm):
-    """ Login Form"""
-
     username = forms.CharField(
         validators = [
             RegexValidator(
@@ -185,92 +142,61 @@ class SignInForm(AuthenticationForm):
     )
 
     class Meta:
-        """ Metadata """
-
         model 	= User
         fields 	= ['username', 'password']
 
 
+
 class AmenityForm(forms.ModelForm):
-    """ Form for adding amenity"""
-
-    name = forms.CharField(
-        validators = [
-            RegexValidator(
-                r'^[a-zA-Z0-9_.\s-]{2,}$',
-                message = 'Allowed characters: a-z, A-Z, 0-9, "_", ".", "-"'
-            )
-        ],
-        widget = forms.TextInput(attrs={
-            'class' : 'form-control',
-            'placeholder': "TV",
-        })
-    )
-
-    fee = forms.DecimalField(
-        widget = forms.TextInput(attrs={
-            'class' : 'form-control',
-            'placeholder': "0.00",
-        })
-    )
-
     class Meta:
         model = models.Amenity
         fields = ['name', 'fee']
+        widgets = {
+            'name': forms.TextInput(attrs={
+                    'class' : 'form-control',
+                    'placeholder': "E.g.: Classic Standard",
+            }),
+            "fee": forms.NumberInput(attrs={
+                    'class' : 'form-control',
+                    'min': 0,
+            }),
+        }
+
 
 
 class RoomForm(forms.ModelForm):
     class Meta:
-        # save it to the model
-        # Whenever this forms validates, this is going to create a new User
         model = models.Room
-
-        # fields are going to be shown on our form and in what order
-        fields = [
-            'image', 
-            'name', 
-            'description', 
-            'type', 
-            'amenities', 
-            'base_price', 
-            'capacity', 
-        ]
+        fields = ['image', 'name', 'description', 'type', 'amenities', 'base_price', 'capacity']
         widgets = {
             'image': forms.FileInput(attrs={
                     'class' : 'form-control',
-                }
-            ),
+            }),
             'name': forms.TextInput(attrs={
                     'class' : 'form-control',
                     'placeholder': "E.g.: Classic Standard",
-                }
-            ),
+            }),
             "description": forms.Textarea(attrs={
                     'rows': 2,
                     'class': 'form-control',
                     'placeholder': "E.g.: Lorem ipsum",
-                }
-            ),
+            }),
             "type": forms.Select(attrs={
                     'class' : 'form-select',
-                }
-            ),
+            }),
             "amenities": forms.CheckboxSelectMultiple(attrs={
                     'class' : 'form-check-input',
                     'required' : False,
-                }
-            ),
+            }),
             "base_price": forms.NumberInput(attrs={
                     'class' : 'form-control',
                     'min': 0,
-                }
-            ),
+            }),
             "capacity": forms.NumberInput(attrs={
                     'class' : 'form-control',
                     'min': 0,
                     'step': 1,
-                }
-            )
+            })
         }
 
 
@@ -278,11 +204,7 @@ class RoomForm(forms.ModelForm):
 
 class ReservationForm(forms.ModelForm):
     class Meta:
-        # save it to the model
-        # Whenever this forms validates, this is going to create a new User
         model = models.Reservation
-
-        # fields are going to be shown on our form and in what order
         fields = [
             'date_bookfrom',
             'date_bookuntil',
@@ -303,4 +225,3 @@ class ReservationForm(forms.ModelForm):
                 },
             ),
         }
-

@@ -579,7 +579,7 @@ def reservation_checkout(request, pk):
         msg = f"{reservation.room.name} succesfully checked out."
         logger.debug(msg)
         messages.success(request, msg)
-        return redirect(next if next else "room:reservation:index", request.user.pk)
+        return redirect(next if next else "room:reservation:index")
 
     context = {
         'title': f"Check-out in room \"{reservation.room.name}\"",
